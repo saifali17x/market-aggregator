@@ -22,6 +22,7 @@ class ApiService {
     };
 
     try {
+      console.log(`🌐 Making API request to: ${url}`);
       const response = await fetch(url, config);
 
       if (!response.ok) {
@@ -37,7 +38,10 @@ class ApiService {
         window.location.hostname !== "localhost"
       ) {
         console.log("🔄 Falling back to mock data for production demo");
-        return this.getMockData(endpoint);
+        console.log("📍 Endpoint:", endpoint);
+        const mockData = this.getMockData(endpoint);
+        console.log("📦 Mock data result:", mockData);
+        return mockData;
       }
       throw error;
     }
@@ -45,18 +49,53 @@ class ApiService {
 
   // Mock data fallback for production demo
   getMockData(endpoint) {
-    // Import mock data dynamically to avoid build issues
-    const mockData = {
-      "/products": require("../data/products").products,
-      "/categories": require("../data/products").categories,
-      "/sellers": require("../data/products").sellers,
-    };
-
-    // Extract the base path from endpoint
-    const basePath = endpoint.split("?")[0].split("/")[1];
-    const fullPath = `/${basePath}`;
-
-    return mockData[fullPath] || [];
+    try {
+      // Import mock data dynamically to avoid build issues
+      const mockData = require("../data/products");
+      
+      // Handle different endpoint patterns
+      if (endpoint.includes("/products")) {
+        if (endpoint.includes("?")) {
+          // Handle filtered products
+          return mockData.products.slice(0, 20); // Return first 20 products
+        } else if (endpoint.match(/\/products\/\d+$/)) {
+          // Handle single product
+          const id = endpoint.split("/").pop();
+          return mockData.products.find(p => p.id == id) || mockData.products[0];
+        } else {
+          // Handle all products
+          return mockData.products;
+        }
+      } else if (endpoint.includes("/categories")) {
+        if (endpoint.includes("/popular")) {
+          return mockData.categories.slice(0, 6); // Return popular categories
+        } else {
+          return mockData.categories;
+        }
+      } else if (endpoint.includes("/sellers")) {
+        if (endpoint.includes("/products")) {
+          // Handle seller products
+          return mockData.products.slice(0, 10);
+        } else if (endpoint.match(/\/sellers\/\d+$/)) {
+          // Handle single seller
+          const id = endpoint.split("/").pop();
+          return mockData.sellers.find(s => s.id == id) || mockData.sellers[0];
+        } else {
+          return mockData.sellers;
+        }
+      } else if (endpoint.includes("/search")) {
+        // Handle search results
+        return mockData.products.slice(0, 15);
+      } else if (endpoint.includes("/health")) {
+        return { status: "ok", message: "Mock data mode active" };
+      }
+      
+      // Default fallback
+      return [];
+    } catch (error) {
+      console.error("Mock data fallback failed:", error);
+      return [];
+    }
   }
 
   // Product APIs
