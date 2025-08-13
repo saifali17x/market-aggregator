@@ -1,0 +1,31 @@
+{
+  "name": "market-aggregator-scraper",
+  "version": "1.0.0",
+  "description": "Configurable web scraper using Playwright with robots.txt compliance and rate limiting",
+  "main": "scraper.js",
+  "scripts": {
+    "start": "node scraper.js site-config.json",
+    "scrape": "node scraper.js",
+    "test": "node test-scraper.js",
+    "install-browsers": "npx playwright install chromium"
+  },
+  "keywords": [
+    "scraping",
+    "playwright",
+    "web-scraper",
+    "robots.txt",
+    "rate-limiting",
+    "market-aggregator"
+  ],
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "robots-parser": "^3.0.1",
+    "axios": "^1.6.0",
+    "winston": "^3.11.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "Market Aggregator Team",
+  "license": "MIT"
+}

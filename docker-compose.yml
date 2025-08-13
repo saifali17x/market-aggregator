@@ -1,0 +1,93 @@
+version: "3.8"
+
+services:
+  # Redis service for job queues
+  redis:
+    image: redis:7-alpine
+    container_name: market-aggregator-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Worker service for processing scraping jobs
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    container_name: market-aggregator-worker
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - DB_HOST=${DB_HOST:-localhost}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=${DB_NAME:-marketplace_aggregator}
+      - DB_USER=${DB_USER:-marketplace_user}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - BASE_CURRENCY=${BASE_CURRENCY:-USD}
+      - MATCH_THRESHOLD=${MATCH_THRESHOLD:-0.82}
+      - OVERRIDE_ROBOTS=${OVERRIDE_ROBOTS:-false}
+      - TOS_RISK_ACK=${TOS_RISK_ACK:-false}
+      - ENABLE_HIGH_RISK_SCRAPERS=${ENABLE_HIGH_RISK_SCRAPERS:-false}
+      - HASH_IPS=${HASH_IPS:-false}
+      - HEADLESS=true
+      - SCRAPE_DELAY=${SCRAPE_DELAY:-2000}
+      - BULLMQ_CONCURRENCY=${WORKER_CONCURRENCY:-2}
+      - BULLMQ_MAX_ATTEMPTS=${BULLMQ_MAX_ATTEMPTS:-3}
+      - BULLMQ_BACKOFF_DELAY=${BULLMQ_BACKOFF_DELAY:-5000}
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Worker health check passed')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - market-aggregator-network
+
+  # Optional: API service (can run locally or in Docker)
+  # api:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: market-aggregator-api
+  #   environment:
+  #     - NODE_ENV=production
+  #     - REDIS_URL=redis://redis:6379
+  #     - DB_HOST=${DB_HOST:-localhost}
+  #     - DB_PORT=${DB_PORT:-5432}
+  #     - DB_NAME=${DB_NAME:-marketplace_aggregator}
+  #     - DB_USER=${DB_USER:-marketplace_user}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - JWT_SECRET=${JWT_SECRET}
+  #   ports:
+  #     - "3001:3001"
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #   networks:
+  #     - market-aggregator-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  market-aggregator-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

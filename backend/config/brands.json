@@ -1,0 +1,107 @@
+{
+  "apple": {
+    "aliases": ["iphone", "ipad", "macbook", "mac", "airpods", "apple watch", "imac"],
+    "category": "electronics",
+    "patterns": ["iphone\\s*(\\d+[a-z]*)", "ipad\\s*(\\d+[a-z]*)", "macbook\\s*(\\w+)"]
+  },
+  "samsung": {
+    "aliases": ["galaxy", "note", "tab", "buds", "watch"],
+    "category": "electronics",
+    "patterns": ["galaxy\\s*(\\w+\\s*\\d*)", "note\\s*(\\d+)", "tab\\s*(\\w+)"]
+  },
+  "sony": {
+    "aliases": ["playstation", "xperia", "wh", "wf", "a7", "a9"],
+    "category": "electronics",
+    "patterns": ["playstation\\s*(\\d+)", "xperia\\s*(\\d+)", "wh-\\d+", "wf-\\d+"]
+  },
+  "lg": {
+    "aliases": ["g", "v", "k", "gram", "ultra"],
+    "category": "electronics",
+    "patterns": ["g\\d+", "v\\d+", "k\\d+", "gram\\s*(\\d+)"]
+  },
+  "nike": {
+    "aliases": ["air", "jordan", "max", "force", "dunk"],
+    "category": "clothing",
+    "patterns": ["air\\s*(\\w+)", "jordan\\s*(\\d+)", "max\\s*(\\d+)"]
+  },
+  "adidas": {
+    "aliases": ["boost", "yeezy", "ultra", "nmd", "stan smith"],
+    "category": "clothing",
+    "patterns": ["boost\\s*(\\w+)", "yeezy\\s*(\\d+)", "ultra\\s*(\\d+)"]
+  },
+  "canon": {
+    "aliases": ["eos", "powershot", "ixus"],
+    "category": "electronics",
+    "patterns": ["eos\\s*(\\w+\\s*\\d*)", "powershot\\s*(\\w+)"]
+  },
+  "nikon": {
+    "aliases": ["d", "z", "coolpix"],
+    "category": "electronics",
+    "patterns": ["d\\d+", "z\\d+", "coolpix\\s*(\\w+)"]
+  },
+  "dell": {
+    "aliases": ["inspiron", "latitude", "precision", "xps"],
+    "category": "electronics",
+    "patterns": ["inspiron\\s*(\\d+)", "latitude\\s*(\\d+)", "xps\\s*(\\d+)"]
+  },
+  "hp": {
+    "aliases": ["pavilion", "elitebook", "probook", "spectre"],
+    "category": "electronics",
+    "patterns": ["pavilion\\s*(\\w+)", "elitebook\\s*(\\d+)", "spectre\\s*(\\w+)"]
+  },
+  "lenovo": {
+    "aliases": ["thinkpad", "ideapad", "yoga", "legion"],
+    "category": "electronics",
+    "patterns": ["thinkpad\\s*(\\w+)", "ideapad\\s*(\\w+)", "yoga\\s*(\\w+)"]
+  },
+  "asus": {
+    "aliases": ["zenbook", "vivobook", "rog", "tuf"],
+    "category": "electronics",
+    "patterns": ["zenbook\\s*(\\w+)", "vivobook\\s*(\\w+)", "rog\\s*(\\w+)"]
+  },
+  "msi": {
+    "aliases": ["ge", "gs", "gl", "creator"],
+    "category": "electronics",
+    "patterns": ["ge\\d+", "gs\\d+", "gl\\d+"]
+  },
+  "razer": {
+    "aliases": ["blade", "deathadder", "blackwidow"],
+    "category": "electronics",
+    "patterns": ["blade\\s*(\\w+)", "deathadder\\s*(\\w+)", "blackwidow\\s*(\\w+)"]
+  },
+  "logitech": {
+    "aliases": ["mx", "g", "k", "m"],
+    "category": "electronics",
+    "patterns": ["mx\\s*(\\w+)", "g\\d+", "k\\d+", "m\\d+"]
+  },
+  "steel": {
+    "aliases": ["series", "rival", "apex", "arctis"],
+    "category": "electronics",
+    "patterns": ["series\\s*(\\d+)", "rival\\s*(\\d+)", "apex\\s*(\\w+)"]
+  },
+  "corsair": {
+    "aliases": ["k", "m", "hs", "void"],
+    "category": "electronics",
+    "patterns": ["k\\d+", "m\\d+", "hs\\d+", "void\\s*(\\w+)"]
+  },
+  "hyperx": {
+    "aliases": ["cloud", "alloy", "pulsefire"],
+    "category": "electronics",
+    "patterns": ["cloud\\s*(\\w+)", "alloy\\s*(\\w+)", "pulsefire\\s*(\\w+)"]
+  },
+  "beats": {
+    "aliases": ["studio", "solo", "powerbeats", "airpods"],
+    "category": "electronics",
+    "patterns": ["studio\\s*(\\w+)", "solo\\s*(\\w+)", "powerbeats\\s*(\\w+)"]
+  },
+  "bose": {
+    "aliases": ["quietcomfort", "soundlink", "sport"],
+    "category": "electronics",
+    "patterns": ["quietcomfort\\s*(\\d+)", "soundlink\\s*(\\w+)", "sport\\s*(\\w+)"]
+  },
+  "jbl": {
+    "aliases": ["flip", "charge", "pulse", "go"],
+    "category": "electronics",
+    "patterns": ["flip\\s*(\\d+)", "charge\\s*(\\d+)", "pulse\\s*(\\d+)"]
+  }
+}

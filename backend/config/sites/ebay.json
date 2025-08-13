@@ -1,0 +1,36 @@
+{
+  "name": "ebay",
+  "displayName": "eBay Listings",
+  "description": "eBay auction and buy-it-now listings",
+  "baseUrl": "https://ebay.com",
+  "startUrl": "https://ebay.com/sch/i.html?_nkw={query}",
+  "selectors": {
+    "product": ".s-item",
+    "title": ".s-item__title",
+    "price": ".s-item__price",
+    "image": ".s-item__image img",
+    "productUrl": ".s-item__link",
+    "nextPage": ".x-pagination__next",
+    "custom": {
+      "shipping": ".s-item__shipping",
+      "condition": ".SECONDARY_INFO",
+      "watchCount": ".s-item__watchCount",
+      "timeLeft": ".s-item__time-left"
+    },
+    "metadata": {
+      "auction": ".s-item__auction",
+      "buyItNow": ".s-item__purchase-options",
+      "topRated": ".s-item__topRatedPlus"
+    }
+  },
+  "waitForSelector": ".s-item",
+  "options": {
+    "respectRobots": true,
+    "maxPages": 15,
+    "delay": 2500
+  },
+  "allow_scrape": true,
+  "requires_login": false,
+  "risk_level": "medium",
+  "compliance_notes": "eBay allows scraping but has rate limits and may block aggressive scrapers."
+}

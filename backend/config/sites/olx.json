@@ -1,0 +1,79 @@
+{
+  "name": "OLX",
+  "baseUrl": "https://www.olx.com",
+  "searchUrl": "https://www.olx.com/search",
+  "platform": "olx",
+  "requiresAuth": false,
+  "selectors": {
+    "product": "[data-cy='l-card']",
+    "title": "h6[data-cy='ad_title']",
+    "price": "[data-testid='ad-price']",
+    "image": "img[data-testid='adPhoto']",
+    "productUrl": "a[data-cy='l-card']",
+    "location": "[data-testid='location-date']",
+    "seller": "[data-testid='ad-owner']",
+    "condition": "[data-testid='ad-condition']",
+    "description": "[data-testid='ad-description']"
+  },
+  "pagination": {
+    "nextPage": "a[data-testid='pagination-forward']",
+    "maxPages": 100,
+    "scrollBased": false
+  },
+  "filters": {
+    "category": "?q={query}",
+    "priceRange": "&filter_float_price%3Afrom={minPrice}&filter_float_price%3Ato={maxPrice}",
+    "location": "&filter_enum_location={location}",
+    "condition": "&filter_enum_condition={condition}"
+  },
+  "rateLimiting": {
+    "delayBetweenRequests": 2000,
+    "maxConcurrentRequests": 3,
+    "respectRobotsTxt": true
+  },
+  "dataExtraction": {
+    "title": {
+      "selector": "h6[data-cy='ad_title']",
+      "attribute": "textContent",
+      "cleanup": ["trim", "removeExtraSpaces"]
+    },
+    "price": {
+      "selector": "[data-testid='ad-price']",
+      "attribute": "textContent",
+      "cleanup": ["extractCurrency", "removeSymbols"]
+    },
+    "image": {
+      "selector": "img[data-testid='adPhoto']",
+      "attribute": "src",
+      "fallback": "data-src"
+    },
+    "location": {
+      "selector": "[data-testid='location-date']",
+      "attribute": "textContent",
+      "cleanup": ["trim", "extractCityState", "removeDate"]
+    },
+    "seller": {
+      "selector": "[data-testid='ad-owner']",
+      "attribute": "textContent",
+      "cleanup": ["trim"]
+    },
+    "condition": {
+      "selector": "[data-testid='ad-condition']",
+      "attribute": "textContent",
+      "cleanup": ["normalizeCondition"]
+    }
+  },
+  "metadata": {
+    "platform": "olx",
+    "requiresJavaScript": false,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "allow_scrape": true,
+  "requires_login": false,
+  "risk_level": "medium",
+  "compliance_notes": "OLX allows scraping but has rate limits and may block aggressive scrapers."
+}

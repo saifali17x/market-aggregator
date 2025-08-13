@@ -1,0 +1,88 @@
+{
+  "name": "Instagram Sellers",
+  "baseUrl": "https://www.instagram.com",
+  "searchUrl": "https://www.instagram.com/explore/tags",
+  "platform": "instagram",
+  "requiresAuth": true,
+  "selectors": {
+    "product": "article[role='presentation']",
+    "title": "img[alt*='product']",
+    "price": "[data-testid='post-caption']",
+    "image": "img[data-testid='post-image']",
+    "productUrl": "a[data-testid='post-link']",
+    "seller": "a[data-testid='username']",
+    "description": "[data-testid='post-caption']",
+    "hashtags": "a[href*='/explore/tags/']"
+  },
+  "pagination": {
+    "nextPage": "a[data-testid='pagination-next']",
+    "maxPages": 20,
+    "scrollBased": true
+  },
+  "filters": {
+    "hashtag": "/explore/tags/{query}",
+    "seller": "/{username}",
+    "location": "&location={location}"
+  },
+  "rateLimiting": {
+    "delayBetweenRequests": 5000,
+    "maxConcurrentRequests": 1,
+    "respectRobotsTxt": true
+  },
+  "dataExtraction": {
+    "title": {
+      "selector": "img[alt*='product']",
+      "attribute": "alt",
+      "cleanup": ["extractProductName", "removeExtraSpaces"]
+    },
+    "price": {
+      "selector": "[data-testid='post-caption']",
+      "attribute": "textContent",
+      "cleanup": ["extractPrice", "removeSymbols"]
+    },
+    "image": {
+      "selector": "img[data-testid='post-image']",
+      "attribute": "src",
+      "fallback": "data-src"
+    },
+    "seller": {
+      "selector": "a[data-testid='username']",
+      "attribute": "textContent",
+      "cleanup": ["trim", "removeAtSymbol"]
+    },
+    "description": {
+      "selector": "[data-testid='post-caption']",
+      "attribute": "textContent",
+      "cleanup": ["trim", "extractDescription"]
+    },
+    "hashtags": {
+      "selector": "a[href*='/explore/tags/']",
+      "attribute": "textContent",
+      "cleanup": ["extractHashtags"]
+    }
+  },
+  "metadata": {
+    "platform": "instagram",
+    "requiresJavaScript": true,
+    "requiresLogin": true,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "cookies": {
+      "sessionid": "REQUIRED",
+      "csrftoken": "REQUIRED"
+    }
+  },
+  "searchStrategies": [
+    "hashtag_search",
+    "seller_profile",
+    "location_based",
+    "trending_posts"
+  ],
+  "allow_scrape": false,
+  "requires_login": true,
+  "risk_level": "high",
+  "compliance_notes": "Instagram requires login and has strict anti-scraping measures. High risk of account suspension."
+}

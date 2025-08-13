@@ -1,0 +1,30 @@
+{
+  "name": "shopify",
+  "displayName": "Shopify Store",
+  "description": "Generic Shopify store scraper",
+  "baseUrl": "https://example-shop.myshopify.com",
+  "startUrl": "https://example-shop.myshopify.com/collections/all",
+  "selectors": {
+    "product": ".product-item, .grid-item",
+    "title": ".product-title, h3",
+    "price": ".price, .money",
+    "image": ".product-image img",
+    "productUrl": ".product-item a, .grid-item a",
+    "nextPage": ".pagination .next, [rel='next']",
+    "custom": {
+      "comparePrice": ".compare-at-price",
+      "vendor": ".product-vendor",
+      "tags": ".product-tags"
+    }
+  },
+  "waitForSelector": ".product-item",
+  "options": {
+    "respectRobots": true,
+    "maxPages": 25,
+    "delay": 2000
+  },
+  "allow_scrape": true,
+  "requires_login": false,
+  "risk_level": "low",
+  "compliance_notes": "Shopify stores generally allow scraping and have minimal restrictions."
+}

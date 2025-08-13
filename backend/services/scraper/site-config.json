@@ -1,0 +1,27 @@
+{
+  "name": "Sample E-commerce Site",
+  "startUrl": "https://example-store.com/products",
+  "description": "Sample configuration for testing the standalone scraper",
+  "selectors": {
+    "product": ".product-item, .product-card, [data-testid='product-item']",
+    "title": ".product-title, .product-name, h2, h3, [data-testid='product-title']",
+    "price": ".price, .product-price, [data-testid='price'], .price-current",
+    "image": ".product-image img, .product-photo img, img[alt*='product']",
+    "nextPage": ".pagination-next, .next-page, a[aria-label='Next page']",
+    "custom": {
+      "rating": ".rating, .stars, .review-score",
+      "availability": ".availability, .stock-status, [data-testid='availability']",
+      "brand": ".brand, .product-brand, [data-testid='brand']",
+      "description": ".product-description, .description",
+      "sku": ".sku, .product-code, [data-testid='sku']",
+      "category": ".category, .breadcrumb a:last-child"
+    }
+  },
+  "waitForSelector": ".product-item, .product-card",
+  "options": {
+    "respectRobots": true,
+    "maxPages": 5,
+    "delay": 2000,
+    "retryAttempts": 3
+  }
+}

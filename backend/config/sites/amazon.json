@@ -1,0 +1,36 @@
+{
+  "name": "amazon",
+  "displayName": "Amazon Products",
+  "description": "Amazon product listings scraper",
+  "baseUrl": "https://amazon.com",
+  "startUrl": "https://amazon.com/s?k={query}&ref=sr_pg_1",
+  "selectors": {
+    "product": "[data-component-type='s-search-result']",
+    "title": "h2 a span, .s-title-instructions-style h2 a span",
+    "price": ".a-price-whole, .a-offscreen",
+    "image": ".s-image",
+    "productUrl": "h2 a",
+    "nextPage": "a[aria-label='Next page'], .s-pagination-next",
+    "custom": {
+      "rating": ".a-icon-alt",
+      "reviewCount": "a[href*='#customerReviews'] span",
+      "availability": ".a-size-base-plus",
+      "brand": ".a-size-base-plus"
+    },
+    "metadata": {
+      "prime": ".s-prime",
+      "sponsored": "[aria-label='Sponsored']",
+      "bestseller": ".a-badge-label"
+    }
+  },
+  "waitForSelector": "[data-component-type='s-search-result']",
+  "options": {
+    "respectRobots": true,
+    "maxPages": 20,
+    "delay": 3000
+  },
+  "allow_scrape": true,
+  "requires_login": false,
+  "risk_level": "medium",
+  "compliance_notes": "Amazon allows scraping but has rate limits and may block aggressive scrapers."
+}
