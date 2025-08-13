@@ -33,40 +33,26 @@ export default function AboutPage() {
     }
   ];
 
-  const team = [
-    {
-      name: "Alex Johnson",
-      role: "Founder & CEO",
-      bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers.",
-      image: "/api/placeholder/150/150"
-    },
-    {
-      name: "Sarah Chen",
-      role: "Head of Product",
-      bio: "Expert in user experience design and marketplace optimization strategies.",
-      image: "/api/placeholder/150/150"
-    },
-    {
-      name: "Mike Rodriguez",
-      role: "CTO",
-      bio: "Technology leader focused on building scalable, secure, and innovative e-commerce solutions.",
-      image: "/api/placeholder/150/150"
-    }
-  ];
+  const founder = {
+    name: "Saif Ali",
+    role: "Founder & CEO",
+    bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers. Saif Ali founded LuxLink with a vision to revolutionize online marketplace experiences through innovative technology and exceptional user experience.",
+    image: "/api/placeholder/200/200" // You can replace this with your actual photo URL
+  };
 
   return (
     <Layout>
       <Head>
-        <title>About Us - MarketPlace</title>
-        <meta name="description" content="Learn about MarketPlace and our mission to connect buyers with trusted sellers" />
+        <title>About Us - LuxLink</title>
+        <meta name="description" content="Learn about LuxLink and our mission to connect buyers with trusted sellers" />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white py-20">
+        <section className="relative bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About MarketPlace
+              About LuxLink
             </h1>
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
               We're building the future of online shopping by creating a trusted, 
@@ -81,7 +67,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">{stat.value}</div>
+                  <div className="text-3xl font-bold text-indigo-600 mb-2">{stat.value}</div>
                   <div className="text-gray-600">{stat.label}</div>
                 </div>
               ))}
@@ -95,7 +81,7 @@ export default function AboutPage() {
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                At MarketPlace, we believe that everyone deserves access to quality products 
+                At LuxLink, we believe that everyone deserves access to quality products 
                 from trusted sellers. Our mission is to create a seamless, secure, and 
                 enjoyable shopping experience that connects buyers with the best products 
                 and sellers in the world.
@@ -114,13 +100,13 @@ export default function AboutPage() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Why Choose MarketPlace?
+              Why Choose LuxLink?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {features.map((feature, index) => (
                 <div key={index} className="text-center p-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-8 h-8 text-blue-600" />
+                  <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="w-8 h-8 text-indigo-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">
                     {feature.title}
@@ -134,25 +120,23 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Team Section */}
+        {/* Founder Section */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Meet Our Team
+              Meet Our Founder
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {team.map((member, index) => (
-                <div key={index} className="bg-white rounded-lg shadow-sm p-6 text-center">
-                  <div className="bg-gray-200 w-24 h-24 rounded-full mx-auto mb-4"></div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {member.name}
-                  </h3>
-                  <p className="text-blue-600 font-medium mb-3">{member.role}</p>
-                  <p className="text-gray-600 leading-relaxed">
-                    {member.bio}
-                  </p>
-                </div>
-              ))}
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                <div className="bg-gray-200 w-32 h-32 rounded-full mx-auto mb-6"></div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                  {founder.name}
+                </h3>
+                <p className="text-indigo-600 font-medium mb-4 text-lg">{founder.role}</p>
+                <p className="text-gray-600 leading-relaxed text-lg">
+                  {founder.bio}
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -190,7 +174,7 @@ export default function AboutPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-blue-600 text-white">
+        <section className="py-16 bg-indigo-600 text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-xl mb-8 opacity-90">
@@ -199,13 +183,13 @@ export default function AboutPage() {
             <div className="space-x-4">
               <a
                 href="/products"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+                className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
               >
                 Start Shopping
               </a>
               <a
                 href="/seller/register"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-block"
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors inline-block"
               >
                 Become a Seller
               </a>
