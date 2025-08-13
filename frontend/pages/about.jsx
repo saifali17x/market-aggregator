@@ -7,44 +7,52 @@ export default function AboutPage() {
     { icon: Users, value: "10K+", label: "Happy Customers" },
     { icon: ShoppingBag, value: "50K+", label: "Products Listed" },
     { icon: Shield, value: "100%", label: "Secure Shopping" },
-    { icon: Globe, value: "24/7", label: "Customer Support" }
+    { icon: Globe, value: "24/7", label: "Customer Support" },
   ];
 
   const features = [
     {
       icon: Shield,
       title: "Trusted & Secure",
-      description: "Shop with confidence knowing your transactions are protected by industry-leading security measures."
+      description:
+        "Shop with confidence knowing your transactions are protected by industry-leading security measures.",
     },
     {
       icon: Globe,
       title: "Global Marketplace",
-      description: "Access products from sellers worldwide, all in one convenient platform."
+      description:
+        "Access products from sellers worldwide, all in one convenient platform.",
     },
     {
       icon: Award,
       title: "Quality Assured",
-      description: "Every seller is verified and every product meets our quality standards."
+      description:
+        "Every seller is verified and every product meets our quality standards.",
     },
     {
       icon: Heart,
       title: "Customer First",
-      description: "Your satisfaction is our priority with 30-day returns and dedicated support."
-    }
+      description:
+        "Your satisfaction is our priority with 30-day returns and dedicated support.",
+    },
   ];
 
   const founder = {
     name: "Saif Ali",
     role: "Founder & CEO",
     bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers. Saif Ali founded LuxLink with a vision to revolutionize online marketplace experiences through innovative technology and exceptional user experience.",
-    image: "/api/placeholder/200/200" // You can replace this with your actual photo URL
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop", // Saif Ali's professional photo
   };
 
   return (
     <Layout>
       <Head>
         <title>About Us - LuxLink</title>
-        <meta name="description" content="Learn about LuxLink and our mission to connect buyers with trusted sellers" />
+        <meta
+          name="description"
+          content="Learn about LuxLink and our mission to connect buyers with trusted sellers"
+        />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -55,8 +63,8 @@ export default function AboutPage() {
               About LuxLink
             </h1>
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
-              We're building the future of online shopping by creating a trusted, 
-              secure, and seamless marketplace experience for everyone.
+              We're building the future of online shopping by creating a
+              trusted, secure, and seamless marketplace experience for everyone.
             </p>
           </div>
         </section>
@@ -67,7 +75,9 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-3xl font-bold text-indigo-600 mb-2">{stat.value}</div>
+                  <div className="text-3xl font-bold text-indigo-600 mb-2">
+                    {stat.value}
+                  </div>
                   <div className="text-gray-600">{stat.label}</div>
                 </div>
               ))}
@@ -79,18 +89,20 @@ export default function AboutPage() {
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                Our Mission
+              </h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                At LuxLink, we believe that everyone deserves access to quality products 
-                from trusted sellers. Our mission is to create a seamless, secure, and 
-                enjoyable shopping experience that connects buyers with the best products 
-                and sellers in the world.
+                At LuxLink, we believe that everyone deserves access to quality
+                products from trusted sellers. Our mission is to create a
+                seamless, secure, and enjoyable shopping experience that
+                connects buyers with the best products and sellers in the world.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                We're committed to building a platform that not only serves our customers 
-                but also empowers sellers to grow their businesses and reach new audiences. 
-                Through innovation, trust, and community, we're shaping the future of 
-                e-commerce.
+                We're committed to building a platform that not only serves our
+                customers but also empowers sellers to grow their businesses and
+                reach new audiences. Through innovation, trust, and community,
+                we're shaping the future of e-commerce.
               </p>
             </div>
           </div>
@@ -128,11 +140,17 @@ export default function AboutPage() {
             </h2>
             <div className="max-w-2xl mx-auto">
               <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-                <div className="bg-gray-200 w-32 h-32 rounded-full mx-auto mb-6"></div>
+                <img
+                  src={founder.image}
+                  alt={`${founder.name} - ${founder.role}`}
+                  className="w-32 h-32 rounded-full mx-auto mb-6 object-cover"
+                />
                 <h3 className="text-2xl font-semibold text-gray-900 mb-2">
                   {founder.name}
                 </h3>
-                <p className="text-indigo-600 font-medium mb-4 text-lg">{founder.role}</p>
+                <p className="text-indigo-600 font-medium mb-4 text-lg">
+                  {founder.role}
+                </p>
                 <p className="text-gray-600 leading-relaxed text-lg">
                   {founder.bio}
                 </p>
@@ -149,23 +167,29 @@ export default function AboutPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Trust</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Trust
+                </h3>
                 <p className="text-gray-600">
-                  We build trust through transparency, verification, and consistent 
-                  quality across our platform.
+                  We build trust through transparency, verification, and
+                  consistent quality across our platform.
                 </p>
               </div>
               <div className="text-center p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Innovation</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Innovation
+                </h3>
                 <p className="text-gray-600">
-                  We continuously innovate to provide the best possible shopping 
+                  We continuously innovate to provide the best possible shopping
                   experience for our users.
                 </p>
               </div>
               <div className="text-center p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Community</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Community
+                </h3>
                 <p className="text-gray-600">
-                  We foster a strong community of buyers and sellers, supporting 
+                  We foster a strong community of buyers and sellers, supporting
                   each other's success.
                 </p>
               </div>
