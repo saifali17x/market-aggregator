@@ -1,6 +1,6 @@
-const { Queue, Worker, QueueScheduler, QueueEvents } = require("bullmq");
+const { Queue, Worker, QueueEvents } = require("bullmq");
 const Redis = require("ioredis");
-const { logger } = require("../utils/logger");
+const logger = require("../utils/logger");
 
 /**
  * Redis connection configuration
@@ -95,12 +95,11 @@ const createQueues = (redis) => {
 };
 
 /**
- * Create queue scheduler
+ * Create queue scheduler (removed in BullMQ v5)
  */
 const createScheduler = (redis) => {
-  return new QueueScheduler("scraping", {
-    connection: redis,
-  });
+  // QueueScheduler was removed in BullMQ v5
+  return null;
 };
 
 /**
@@ -121,7 +120,7 @@ class QueueManager {
     try {
       this.redis = createRedisConnection();
       this.queues = createQueues(this.redis);
-      this.scheduler = createScheduler(this.redis);
+      // this.scheduler = createScheduler(this.redis); // Removed in BullMQ v5
 
       logger.info("Queue manager initialized successfully");
       return true;
@@ -286,10 +285,10 @@ class QueueManager {
         await queue.close();
       }
 
-      // Close scheduler
-      if (this.scheduler) {
-        await this.scheduler.close();
-      }
+      // Close scheduler (removed in BullMQ v5)
+      // if (this.scheduler) {
+      //   await this.scheduler.close();
+      // }
 
       // Close Redis connection
       if (this.redis) {

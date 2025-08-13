@@ -57,6 +57,32 @@ services:
     networks:
       - market-aggregator-network
 
+  # PostgreSQL database service
+  postgres:
+    image: postgres:15-alpine
+    container_name: market-aggregator-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-marketplace_aggregator}
+      - POSTGRES_USER=${DB_USER:-marketplace_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-marketplace_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-marketplace_user} -d ${DB_NAME:-marketplace_aggregator}",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - market-aggregator-network
+
   # Optional: API service (can run locally or in Docker)
   # api:
   #   build:
@@ -83,6 +109,8 @@ services:
 
 volumes:
   redis_data:
+    driver: local
+  postgres_data:
     driver: local
 
 networks:

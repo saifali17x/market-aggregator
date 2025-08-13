@@ -1,0 +1,29 @@
+{
+  "development": {
+    "username": "marketplace_user",
+    "password": "marketplace_pass",
+    "database": "marketplace_aggregator",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false
+  },
+  "test": {
+    "username": "marketplace_user",
+    "password": "marketplace_pass",
+    "database": "marketplace_aggregator_test",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "username": "marketplace_user",
+    "password": "marketplace_pass",
+    "database": "marketplace_aggregator",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false
+  }
+}

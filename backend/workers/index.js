@@ -6,7 +6,7 @@
  */
 
 const ScrapeWorker = require("./scrapeWorker");
-const { logger } = require("../utils/logger");
+const logger = require("../utils/logger");
 
 // Graceful shutdown handling
 process.on("SIGTERM", gracefulShutdown);

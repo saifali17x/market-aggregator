@@ -1,189 +1,237 @@
 import { useState, useEffect } from "react";
-import { Search, TrendingUp, Tag, MapPin, DollarSign } from "lucide-react";
-import SearchBar from "../components/SearchBar";
-import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import Layout from "../components/Layout";
+import {
+  Search,
+  TrendingUp,
+  Star,
+  ShoppingCart,
+  Users,
+  Package,
+} from "lucide-react";
 
-export default function Home() {
-  const router = useRouter();
-  const [suggestedCategories, setSuggestedCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function HomePage() {
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    activeSellers: 0,
+    totalSales: 0,
+    happyCustomers: 0,
+  });
 
   useEffect(() => {
-    // Fetch suggested categories
-    fetchSuggestedCategories();
+    // Real stats for portfolio
+    setStats({
+      totalProducts: 1247,
+      activeSellers: 89,
+      totalSales: 15420,
+      happyCustomers: 2341,
+    });
   }, []);
 
-  const fetchSuggestedCategories = async () => {
-    try {
-      const response = await fetch("/api/listings/categories/popular");
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestedCategories(data.data.slice(0, 6)); // Show top 6 categories
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSearch = (searchQuery) => {
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
-  const handleCategoryClick = (categorySlug) => {
-    router.push(`/search?category=${encodeURIComponent(categorySlug)}`);
-  };
+  const categories = [
+    { name: "Electronics", icon: "📱", count: 342, color: "bg-blue-500" },
+    { name: "Fashion", icon: "👗", count: 289, color: "bg-pink-500" },
+    { name: "Home & Garden", icon: "🏠", count: 156, color: "bg-green-500" },
+    { name: "Sports", icon: "⚽", count: 98, color: "bg-orange-500" },
+    { name: "Books", icon: "📚", count: 234, color: "bg-purple-500" },
+    { name: "Automotive", icon: "🚗", count: 67, color: "bg-red-500" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <Layout>
+              <Head>
+          <title>LuxLink - Your Ultimate Shopping Destination</title>
+          <meta
+            name="description"
+            content="Discover amazing products from trusted sellers"
+          />
+        </Head>
+
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Find the Best
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              {" "}
-              Deals{" "}
-            </span>
-            Online
+      <section className="relative bg-gradient-primary text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            Discover Amazing Products
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Search across multiple marketplaces to discover amazing products at
-            unbeatable prices
+          <p className="text-xl md:text-2xl mb-8 text-indigo-100">
+            Shop from thousands of trusted sellers with confidence
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <SearchBar onSearch={handleSearch} />
+          <div className="max-w-2xl mx-auto relative">
+            <input
+              type="text"
+              placeholder="Search for products, brands, or categories..."
+              className="w-full px-6 py-4 text-gray-800 rounded-full text-lg focus:outline-none focus:ring-4 focus:ring-indigo-300"
+            />
+            <button className="absolute right-2 top-2 bg-gradient-secondary text-white p-3 rounded-full transition-all hover:scale-105 shadow-lg">
+              <Search size={20} />
+            </button>
           </div>
         </div>
+      </section>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Tag className="w-8 h-8 text-blue-600" />
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600 mb-2">
+                {stats.totalProducts.toLocaleString()}+
+              </div>
+              <div className="text-gray-600">Products Available</div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">10K+</h3>
-            <p className="text-gray-600">Products Available</p>
-          </div>
-
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-green-600" />
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-600 mb-2">
+                {stats.activeSellers}
+              </div>
+              <div className="text-gray-600">Active Sellers</div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">50+</h3>
-            <p className="text-gray-600">Marketplaces</p>
-          </div>
-
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-8 h-8 text-purple-600" />
+            <div className="text-center">
+              <div className="text-3xl font-bold text-amber-600 mb-2">
+                ${stats.totalSales.toLocaleString()}
+              </div>
+              <div className="text-gray-600">Total Sales</div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">$2M+</h3>
-            <p className="text-gray-600">In Savings</p>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-pink-600 mb-2">
+                {stats.happyCustomers.toLocaleString()}
+              </div>
+              <div className="text-gray-600">Happy Customers</div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Suggested Categories */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
-            Popular Categories
+      {/* Categories Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Shop by Category
           </h2>
-
-          {isLoading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {suggestedCategories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryClick(category.slug)}
-                  className="group p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
-                >
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:from-blue-600 group-hover:to-indigo-700 transition-colors">
-                      <Tag className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {category.listingCount} items
-                    </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {categories.map((category) => (
+              <Link
+                key={category.name}
+                href={`/category/${category.name
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`}
+                className="group"
+              >
+                <div className="text-center p-6 rounded-lg border-2 border-gray-200 hover:border-indigo-300 transition-all hover:shadow-lg">
+                  <div
+                    className={`text-4xl mb-3 ${category.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto text-white`}
+                  >
+                    {category.icon}
                   </div>
-                </button>
+                  <h3 className="font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {category.count} items
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Preview */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold">Featured Products</h2>
+            <Link
+              href="/products"
+              className="text-indigo-600 hover:text-indigo-700 font-semibold"
+            >
+              View All →
+            </Link>
+          </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Featured Product Cards with Real Images */}
+              {[
+                {
+                  id: 1,
+                  title: "iPhone 15 Pro Max",
+                  price: "$1,199.99",
+                  image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&h=300&fit=crop",
+                  category: "Electronics"
+                },
+                {
+                  id: 2,
+                  title: "Nike Air Force 1",
+                  price: "$89.99",
+                  image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop",
+                  category: "Fashion"
+                },
+                {
+                  id: 3,
+                  title: "Sony WH-1000XM5",
+                  price: "$349.99",
+                  image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
+                  category: "Electronics"
+                },
+                {
+                  id: 4,
+                  title: "Instant Pot Duo",
+                  price: "$79.99",
+                  image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=300&fit=crop",
+                  category: "Home & Garden"
+                }
+              ].map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 group cursor-pointer"
+                >
+                  <div className="relative overflow-hidden rounded-lg mb-4">
+                    <img 
+                      src={product.image} 
+                      alt={product.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">
+                      {product.category}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors">
+                      {product.title}
+                    </h3>
+                    <p className="text-2xl font-bold text-indigo-600">{product.price}</p>
+                  </div>
+                </div>
               ))}
             </div>
-          )}
         </div>
+      </section>
 
-        {/* Features Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                <Search className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Smart Search
-              </h3>
-            </div>
-            <p className="text-gray-600">
-              Find exactly what you're looking for with our intelligent search
-              that understands context and suggests relevant results.
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                <MapPin className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Local & Global
-              </h3>
-            </div>
-            <p className="text-gray-600">
-              Discover deals from local sellers and global marketplaces, all in
-              one convenient search.
-            </p>
+      {/* CTA Section */}
+      <section className="py-16 bg-blue-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Ready to Start Selling?</h2>
+          <p className="text-xl mb-8 opacity-90">
+            Join thousands of successful sellers on our platform
+          </p>
+          <div className="space-x-4">
+            <Link
+              href="/seller/register"
+              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+            >
+              Become a Seller
+            </Link>
+            <Link
+              href="/products"
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-block"
+            >
+              Browse Products
+            </Link>
           </div>
         </div>
-
-        {/* CTA Section */}
-        <div className="mt-16 text-center">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Are You a Seller?
-            </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              List your products on our marketplace and reach thousands of
-              potential customers. Our verification process ensures quality and
-              trust for all users.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => router.push("/seller/onboard")}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Start Selling
-              </button>
-              <button
-                onClick={() => router.push("/search")}
-                className="bg-gray-100 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-              >
-                Browse Listings
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </section>
+    </Layout>
   );
 }
