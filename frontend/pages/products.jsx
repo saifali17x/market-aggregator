@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import { Search, Filter, Star, ShoppingCart, Heart, Eye } from "lucide-react";
-import { products, categories } from "../data/products";
+import apiService from "../services/api";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -14,16 +14,43 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState("relevance");
 
-  const allCategories = [
-    { id: "all", name: "All Categories", count: products.length },
-    ...categories
-  ];
+  const [allCategories, setAllCategories] = useState([
+    { id: "all", name: "All Categories", count: 0 }
+  ]);
 
   useEffect(() => {
-    // Use real data from data file
-    setProducts(products);
-    setFilteredProducts(products);
-    setLoading(false);
+    // Fetch products and categories from API
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch products
+        const productsResponse = await apiService.getProducts();
+        if (productsResponse.success) {
+          setProducts(productsResponse.data);
+          setFilteredProducts(productsResponse.data);
+        }
+        
+        // Fetch categories
+        const categoriesResponse = await apiService.getCategories();
+        if (categoriesResponse.success) {
+          const categoriesWithAll = [
+            { id: "all", name: "All Categories", count: productsResponse.data?.length || 0 },
+            ...categoriesResponse.data
+          ];
+          setAllCategories(categoriesWithAll);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Fallback to mock data if API fails
+        setProducts([]);
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {

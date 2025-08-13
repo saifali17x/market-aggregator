@@ -83,7 +83,7 @@ export default function SellerProfilePage() {
         },
         {
           id: 3,
-          title: "MacBook Pro 14" M3 Chip",
+          title: "MacBook Pro 14 M3 Chip",
           price: 1999.99,
           originalPrice: 2199.99,
           image: "/api/placeholder/200/200",

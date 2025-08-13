@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
         ],
         relatedProducts: [
           { id: 2, title: "Samsung Galaxy S24 Ultra", price: 1099.99, image: "/api/placeholder/200/200" },
-          { id: 3, title: "MacBook Pro 14" M3", price: 1999.99, image: "/api/placeholder/200/200" },
+          { id: 3, title: "MacBook Pro 14 M3 Chip", price: 1999.99, image: "/api/placeholder/200/200" },
           { id: 5, title: "Sony WH-1000XM5", price: 349.99, image: "/api/placeholder/200/200" }
         ],
         analytics: {

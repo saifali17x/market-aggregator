@@ -1,557 +1,208 @@
-const express = require("express");
-const { body, query, validationResult } = require("express-validator");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-const { v4: uuidv4 } = require("uuid");
-const { Seller, Listing } = require("../models");
-const { requireAdmin } = require("../middleware/auth");
-const { Op, sequelize } = require("sequelize");
-
+const express = require('express');
 const router = express.Router();
+const logger = require('../utils/logger');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../uploads/proof-images");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
+const sellers = [
+  {
+    id: 1,
+    name: "TechStore Pro",
+    tagline: "Your trusted source for premium electronics and gadgets",
+    description: "TechStore Pro has been serving customers since 2020 with the latest and greatest in technology. We specialize in smartphones, laptops, headphones, and other electronic devices from top brands like Apple, Samsung, Sony, and more.",
+    logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=120&h=120&fit=crop",
+    coverImage: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=300&fit=crop",
+    rating: 4.8,
+    reviewCount: 1247,
+    verified: true,
+    memberSince: "2020",
+    totalSales: 15420,
+    totalProducts: 342,
+    responseTime: "2 hours",
+    location: "San Francisco, CA",
+    website: "https://techstorepro.com",
+    email: "support@techstorepro.com",
+    phone: "+1 (555) 123-4567",
+    categories: ["Electronics", "Smartphones", "Laptops", "Headphones", "Accessories"],
+    badges: ["Top Seller", "Fast Shipper", "Verified Store", "Premium Partner"]
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "proof-" + uniqueSuffix + path.extname(file.originalname));
+  {
+    id: 2,
+    name: "StyleHub",
+    tagline: "Leading fashion retailer offering the latest trends",
+    description: "StyleHub brings you the latest trends in clothing, shoes, and accessories from around the world. We curate collections that combine style, quality, and affordability.",
+    logo: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=120&h=120&fit=crop",
+    coverImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=300&fit=crop",
+    rating: 4.6,
+    reviewCount: 892,
+    verified: true,
+    memberSince: "2019",
+    totalSales: 12340,
+    totalProducts: 234,
+    responseTime: "4 hours",
+    location: "New York, NY",
+    website: "https://stylehub.com",
+    email: "hello@stylehub.com",
+    phone: "+1 (555) 987-6543",
+    categories: ["Fashion", "Shoes", "Accessories", "Jewelry"],
+    badges: ["Fashion Expert", "Trend Setter", "Verified Store"]
   },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+  {
+    id: 3,
+    name: "Home Essentials",
+    tagline: "Everything you need for your home and garden",
+    description: "Home Essentials has been making homes beautiful and functional since 2021. From kitchen appliances to outdoor furniture, we provide quality products that enhance your living space.",
+    logo: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=120&h=120&fit=crop",
+    coverImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=300&fit=crop",
+    rating: 4.7,
+    reviewCount: 567,
+    verified: true,
+    memberSince: "2021",
+    totalSales: 8900,
+    totalProducts: 156,
+    responseTime: "6 hours",
+    location: "Chicago, IL",
+    website: "https://homeessentials.com",
+    email: "info@homeessentials.com",
+    phone: "+1 (555) 456-7890",
+    categories: ["Home & Garden", "Kitchen", "Furniture", "Outdoor"],
+    badges: ["Home Expert", "Quality Assured", "Fast Delivery"]
   },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only image files are allowed"), false);
-    }
-  },
-});
-
-// Email notification stub
-async function sendClaimNotificationEmail(
-  email,
-  claimType,
-  listingId,
-  sellerId
-) {
-  try {
-    // This is a stub - in production, you would integrate with a real email service
-    console.log(`📧 Email notification sent to ${email}`);
-    console.log(`   Claim Type: ${claimType}`);
-    console.log(`   Listing ID: ${listingId}`);
-    console.log(`   Seller ID: ${sellerId}`);
-    console.log(`   Subject: Your listing claim has been submitted`);
-    console.log(
-      `   Body: We've received your claim and will review it within 24-48 hours.`
-    );
-
-    // In production, you would use a service like:
-    // - SendGrid
-    // - AWS SES
-    // - Nodemailer with SMTP
-    // - Mailgun
-
-    return true;
-  } catch (error) {
-    console.error("Error sending email notification:", error);
-    return false;
+  {
+    id: 4,
+    name: "Sports Central",
+    tagline: "Your one-stop shop for sports and fitness equipment",
+    description: "Sports Central is the premier destination for athletes and fitness enthusiasts. We offer top-quality equipment, apparel, and accessories for all sports and fitness activities.",
+    logo: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=120&h=120&fit=crop",
+    coverImage: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&h=300&fit=crop",
+    rating: 4.5,
+    reviewCount: 445,
+    verified: true,
+    memberSince: "2020",
+    totalSales: 6780,
+    totalProducts: 98,
+    responseTime: "8 hours",
+    location: "Miami, FL",
+    website: "https://sportscentral.com",
+    email: "team@sportscentral.com",
+    phone: "+1 (555) 321-0987",
+    categories: ["Sports", "Fitness", "Outdoor", "Athletics"],
+    badges: ["Sports Expert", "Equipment Specialist", "Verified Store"]
   }
-}
+];
 
-// POST /api/sellers/claim - Submit seller claim
-router.post("/claim", upload.single("proofImage"), async (req, res) => {
+// Get all sellers
+router.get('/', async (req, res) => {
   try {
-    const {
-      sellerName,
-      contactEmail,
-      contactPhone,
-      businessName,
-      address,
-      city,
-      state,
-      country,
-      listingId,
-      listingTitle,
-      listingDescription,
-      listingPrice,
-      listingCurrency,
-      listingCondition,
-      termsAccepted,
-    } = req.body;
+    const { verified, rating, location } = req.query;
+    let filteredSellers = [...sellers];
 
-    // Validate required fields
-    if (
-      !sellerName ||
-      !contactEmail ||
-      !contactPhone ||
-      !address ||
-      !city ||
-      !state ||
-      !country
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required seller information",
-      });
+    // Apply filters
+    if (verified === 'true') {
+      filteredSellers = filteredSellers.filter(s => s.verified);
     }
 
-    if (!listingTitle || !listingDescription || !listingPrice) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required listing information",
-      });
+    if (rating) {
+      const minRating = parseFloat(rating);
+      filteredSellers = filteredSellers.filter(s => s.rating >= minRating);
     }
 
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        error: "Proof image is required",
-      });
-    }
-
-    if (termsAccepted !== "true") {
-      return res.status(400).json({
-        success: false,
-        error: "Terms and conditions must be accepted",
-      });
-    }
-
-    // Check if seller already exists
-    let seller = await Seller.findOne({
-      where: { email: contactEmail },
-    });
-
-    if (!seller) {
-      // Create new seller
-      seller = await Seller.create({
-        name: sellerName,
-        email: contactEmail,
-        phone: contactPhone,
-        businessName: businessName || null,
-        address: address,
-        city: city,
-        state: state,
-        country: country,
-        verified: false,
-        status: "pending",
-      });
-    }
-
-    // Handle existing listing claim
-    if (listingId && listingId.trim()) {
-      const existingListing = await Listing.findByPk(listingId);
-
-      if (!existingListing) {
-        return res.status(404).json({
-          success: false,
-          error: "Listing not found",
-        });
-      }
-
-      // Check if listing is already claimed
-      if (existingListing.sellerId && existingListing.sellerId !== seller.id) {
-        return res.status(400).json({
-          success: false,
-          error: "This listing is already claimed by another seller",
-        });
-      }
-
-      // Update existing listing
-      await existingListing.update({
-        sellerId: seller.id,
-        availabilityStatus: "pending_verification",
-        status: "claimed",
-        claimedAt: new Date(),
-        claimProofImage: req.file.filename,
-      });
-
-      // Send email notification for existing listing claim
-      await sendClaimNotificationEmail(
-        contactEmail,
-        "existing",
-        existingListing.id,
-        seller.id
+    if (location) {
+      const locationLower = location.toLowerCase();
+      filteredSellers = filteredSellers.filter(s => 
+        s.location.toLowerCase().includes(locationLower)
       );
-
-      return res.json({
-        success: true,
-        message: "Listing claim submitted successfully",
-        claimId: uuidv4(),
-        type: "existing_listing",
-        listingId: existingListing.id,
-        sellerId: seller.id,
-      });
     }
 
-    // Create new listing for new seller
-    const newListing = await Listing.create({
-      title: listingTitle,
-      description: listingDescription,
-      price: parseFloat(listingPrice),
-      currency: listingCurrency || "USD",
-      condition: listingCondition || "new",
-      availabilityStatus: "pending_verification",
-      status: "new_claim",
-      sellerId: seller.id,
-      claimProofImage: req.file.filename,
-      claimedAt: new Date(),
-      source: "seller_claim",
-    });
-
-    // Send email notification for new listing claim
-    await sendClaimNotificationEmail(
-      contactEmail,
-      "new",
-      newListing.id,
-      seller.id
-    );
-
-    res.status(201).json({
+    res.json({
       success: true,
-      message: "New listing claim submitted successfully",
-      claimId: uuidv4(),
-      type: "new_listing",
-      listingId: newListing.id,
-      sellerId: seller.id,
+      data: filteredSellers,
+      total: filteredSellers.length
     });
   } catch (error) {
-    console.error("Error processing seller claim:", error);
-
-    // Clean up uploaded file if there was an error
-    if (req.file) {
-      try {
-        fs.unlinkSync(req.file.path);
-      } catch (unlinkError) {
-        console.error("Error deleting uploaded file:", unlinkError);
-      }
-    }
-
+    logger.error('Error fetching sellers:', error);
     res.status(500).json({
       success: false,
-      error: "Failed to process seller claim",
+      error: 'Failed to fetch sellers',
+      code: 'SELLERS_ERROR'
     });
   }
 });
 
-// GET /api/sellers - Get all sellers with filtering and pagination
-router.get(
-  "/",
-  [
-    query("page")
-      .optional()
-      .isInt({ min: 1 })
-      .withMessage("Page must be a positive integer"),
-    query("limit")
-      .optional()
-      .isInt({ min: 1, max: 100 })
-      .withMessage("Limit must be between 1 and 100"),
-    query("search").optional().isString().trim(),
-    query("verified")
-      .optional()
-      .isBoolean()
-      .withMessage("Verified must be a boolean"),
-    query("sortBy")
-      .optional()
-      .isIn(["name", "rating", "totalRatings", "createdAt"]),
-    query("sortOrder").optional().isIn(["asc", "desc"]),
-  ],
-  async (req, res) => {
-    try {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const {
-        page = 1,
-        limit = 20,
-        search,
-        verified,
-        sortBy = "name",
-        sortOrder = "asc",
-      } = req.query;
-
-      const offset = (page - 1) * limit;
-
-      // Build where clause
-      const whereClause = {};
-
-      if (search) {
-        whereClause.name = { [Op.iLike]: `%${search}%` };
-      }
-
-      if (verified !== undefined) {
-        whereClause.isVerified = verified;
-      }
-
-      // Build order clause
-      const orderClause = [[sortBy === "totalReviews" ? "totalRatings" : sortBy, sortOrder.toUpperCase()]];
-
-      const { count, rows: sellers } = await Seller.findAndCountAll({
-        where: whereClause,
-        include: [
-          {
-            model: Listing,
-            as: "listings",
-            attributes: ["id", "title", "availabilityStatus"],
-          },
-        ],
-        order: orderClause,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-      });
-
-      const totalPages = Math.ceil(count / limit);
-
-      res.json({
-        success: true,
-        data: sellers,
-        pagination: {
-          currentPage: parseInt(page),
-          totalPages,
-          totalItems: count,
-          itemsPerPage: parseInt(limit),
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching sellers:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
-      });
-    }
-  }
-);
-
-// GET /api/sellers/:id - Get specific seller
-router.get("/:id", async (req, res) => {
+// Get seller by ID
+router.get('/:id', async (req, res) => {
   try {
-    const seller = await Seller.findByPk(req.params.id, {
-              include: [
-          {
-            model: Listing,
-            as: "listings",
-            attributes: [
-              "id",
-              "title",
-              "price",
-              "availabilityStatus",
-              "createdAt",
-            ],
-          },
-        ],
-    });
+    const sellerId = parseInt(req.params.id);
+    const seller = sellers.find(s => s.id === sellerId);
 
     if (!seller) {
       return res.status(404).json({
         success: false,
-        error: "Seller not found",
+        error: 'Seller not found',
+        code: 'SELLER_NOT_FOUND'
       });
     }
 
     res.json({
       success: true,
-      data: seller,
-    });
-  } catch (error) {
-    console.error("Error fetching seller:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch seller",
-    });
-  }
-});
-
-// POST /api/sellers - Create a new seller (admin only)
-router.post(
-  "/",
-  requireAdmin,
-  [
-    body("name")
-      .trim()
-      .isLength({ min: 1, max: 100 })
-      .withMessage("Name is required and must be between 1 and 100 characters"),
-    body("email").isEmail().withMessage("Valid email is required"),
-    body("phone").optional().isString().trim(),
-    body("businessName").optional().isString().trim(),
-    body("address").optional().isString().trim(),
-    body("city").optional().isString().trim(),
-    body("state").optional().isString().trim(),
-    body("country").optional().isString().trim(),
-  ],
-  async (req, res) => {
-    try {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const sellerData = req.body;
-
-      // Create seller
-      const seller = await Seller.create(sellerData);
-
-      res.status(201).json({
-        success: true,
-        data: seller,
-      });
-    } catch (error) {
-      console.error("Error creating seller:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
-      });
-    }
-  }
-);
-
-// PUT /api/sellers/:id - Update seller (admin only)
-router.put(
-  "/:id",
-  requireAdmin,
-  [
-    body("name")
-      .optional()
-      .trim()
-      .isLength({ min: 1, max: 100 })
-      .withMessage("Name must be between 1 and 100 characters"),
-    body("email").optional().isEmail().withMessage("Valid email is required"),
-    body("phone").optional().isString().trim(),
-    body("businessName").optional().isString().trim(),
-    body("address").optional().isString().trim(),
-    body("city").optional().isString().trim(),
-    body("state").optional().isString().trim(),
-    body("country").optional().isString().trim(),
-  ],
-  async (req, res) => {
-    try {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const { id } = req.params;
-      const updateData = req.body;
-
-      const seller = await Seller.findByPk(id);
-      if (!seller) {
-        return res.status(404).json({
-          success: false,
-          error: "Seller not found",
-        });
-      }
-
-      // Update seller
-      await seller.update(updateData);
-
-      res.json({
-        success: true,
-        data: seller,
-      });
-    } catch (error) {
-      console.error("Error updating seller:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
-      });
-    }
-  }
-);
-
-// DELETE /api/sellers/:id - Delete seller (admin only)
-router.delete("/:id", requireAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const seller = await Seller.findByPk(id);
-    if (!seller) {
-      return res.status(404).json({
-        success: false,
-        error: "Seller not found",
-      });
-    }
-
-    // Check if seller has active listings
-    const activeListings = await Listing.count({
-      where: { sellerId: id, availabilityStatus: "available" },
-    });
-
-    if (activeListings > 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Cannot delete seller with active listings",
-      });
-    }
-
-    await seller.destroy();
-
-    res.json({
-      success: true,
-      message: "Seller deleted successfully",
-    });
-  } catch (error) {
-    console.error("Error deleting seller:", error);
-    res.status(500).json({
-      success: false,
-      error: "Internal server error",
-    });
-  }
-});
-
-/**
- * PUT /api/sellers/:id/verify
- * Toggle seller verification status (Admin only)
- */
-router.put("/:id/verify", requireAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { verified } = req.body;
-    
-    if (typeof verified !== 'boolean') {
-      return res.status(400).json({ 
-        success: false,
-        error: "Verified field must be a boolean" 
-      });
-    }
-    
-    const seller = await Seller.findByPk(id);
-    
-    if (!seller) {
-      return res.status(404).json({
-        success: false,
-        error: "Seller not found"
-      });
-    }
-    
-    await seller.update({ is_verified: verified });
-    
-    res.json({
-      success: true,
-      message: `Seller ${verified ? 'verified' : 'unverified'} successfully`,
       data: seller
     });
   } catch (error) {
-    console.error("Error updating seller verification:", error);
+    logger.error('Error fetching seller:', error);
     res.status(500).json({
       success: false,
-      error: "Failed to update seller verification"
+      error: 'Failed to fetch seller',
+      code: 'SELLER_ERROR'
+    });
+  }
+});
+
+// Get seller products
+router.get('/:id/products', async (req, res) => {
+  try {
+    const sellerId = parseInt(req.params.id);
+    const seller = sellers.find(s => s.id === sellerId);
+
+    if (!seller) {
+      return res.status(404).json({
+        success: false,
+        error: 'Seller not found',
+        code: 'SELLER_NOT_FOUND'
+      });
+    }
+
+    // Mock products for this seller
+    const sellerProducts = [
+      {
+        id: 1,
+        title: "iPhone 15 Pro Max",
+        price: 1199.99,
+        image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=200&h=200&fit=crop",
+        category: "Electronics"
+      },
+      {
+        id: 2,
+        title: "MacBook Pro M3",
+        price: 1999.99,
+        image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=200&fit=crop",
+        category: "Electronics"
+      }
+    ];
+
+    res.json({
+      success: true,
+      data: sellerProducts,
+      total: sellerProducts.length,
+      seller: {
+        id: seller.id,
+        name: seller.name,
+        rating: seller.rating
+      }
+    });
+  } catch (error) {
+    logger.error('Error fetching seller products:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch seller products',
+      code: 'SELLER_PRODUCTS_ERROR'
     });
   }
 });

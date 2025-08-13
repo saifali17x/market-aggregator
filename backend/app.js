@@ -11,6 +11,9 @@ const listingRoutes = require("./routes/listings");
 const sellerRoutes = require("./routes/sellers");
 const categoryRoutes = require("./routes/categories");
 const importRoutes = require("./routes/import");
+const productRoutes = require("./routes/products");
+const searchRoutes = require("./routes/search");
+const healthRoutes = require("./routes/health");
 // Temporarily disabled to get basic API running
 // const scraperRoutes = require("./routes/scraper");
 const trackingRoutes = require("./routes/tracking");
@@ -118,6 +121,25 @@ app.get("/api", (req, res) => {
     version: "1.0.0",
     description: "RESTful API for marketplace listing search and aggregation",
     endpoints: {
+      products: {
+        getAll: "GET /api/products",
+        getById: "GET /api/products/:id",
+        search: "GET /api/products?category=&search=&minPrice=&maxPrice=&sortBy=",
+      },
+      categories: {
+        getAll: "GET /api/categories",
+        getPopular: "GET /api/categories/popular",
+        getById: "GET /api/categories/:id",
+      },
+      sellers: {
+        getAll: "GET /api/sellers",
+        getById: "GET /api/sellers/:id",
+        getProducts: "GET /api/sellers/:id/products",
+      },
+      search: {
+        search: "GET /api/search?q=&category=&minPrice=&maxPrice=&sortBy=",
+        suggestions: "GET /api/search/suggestions?q=",
+      },
       listings: {
         search: "GET /api/listings",
         grouped: "GET /api/listings/grouped",
@@ -132,7 +154,7 @@ app.get("/api", (req, res) => {
         sellers: "GET /api/admin/sellers",
         dashboard: "GET /api/admin/dashboard/stats",
       },
-      health: "GET /health",
+      health: "GET /api/health",
     },
     documentation: "https://github.com/saifali/market-aggregator",
   });
@@ -144,6 +166,9 @@ app.use("/api/listings", listingRoutes);
 app.use("/api/sellers", sellerRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/import", importRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/health", healthRoutes);
 // Temporarily disabled to get basic API running
 // app.use("/api/scraper", scraperRoutes);
 app.use("/api/track", trackingRoutes);
@@ -163,6 +188,14 @@ app.use("/api/*", (req, res) => {
     error: `API endpoint not found: ${req.method} ${req.path}`,
     code: "ENDPOINT_NOT_FOUND",
     availableEndpoints: [
+      "GET /api/products",
+      "GET /api/products/:id",
+      "GET /api/categories",
+      "GET /api/categories/popular",
+      "GET /api/sellers",
+      "GET /api/sellers/:id",
+      "GET /api/search?q=",
+      "GET /api/health",
       "GET /api/listings",
       "GET /api/listings/grouped",
       "GET /api/listings/:id",
