@@ -3,54 +3,30 @@ import Head from "next/head";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import { Search, Filter, Star, ShoppingCart, Heart, Eye } from "lucide-react";
-import apiService from "../services/api";
+import { products, categories } from "../data/products";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState("relevance");
 
   const [allCategories, setAllCategories] = useState([
-    { id: "all", name: "All Categories", count: 0 }
+    { id: "all", name: "All Categories", count: products.length },
   ]);
 
   useEffect(() => {
-    // Fetch products and categories from API
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch products
-        const productsResponse = await apiService.getProducts();
-        if (productsResponse.success) {
-          setProducts(productsResponse.data);
-          setFilteredProducts(productsResponse.data);
-        }
-        
-        // Fetch categories
-        const categoriesResponse = await apiService.getCategories();
-        if (categoriesResponse.success) {
-          const categoriesWithAll = [
-            { id: "all", name: "All Categories", count: productsResponse.data?.length || 0 },
-            ...categoriesResponse.data
-          ];
-          setAllCategories(categoriesWithAll);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // Fallback to mock data if API fails
-        setProducts([]);
-        setFilteredProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Set up categories with mock data
+    const categoriesWithAll = [
+      { id: "all", name: "All Categories", count: products.length },
+      ...categories,
+    ];
+    setAllCategories(categoriesWithAll);
 
-    fetchData();
+    // Set initial products
+    setFilteredProducts(products);
   }, []);
 
   useEffect(() => {
@@ -59,20 +35,24 @@ export default function ProductsPage() {
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.seller.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.seller.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      );
     }
 
     // Price filter
-    filtered = filtered.filter(product => 
-      product.price >= priceRange[0] && product.price <= priceRange[1]
+    filtered = filtered.filter(
+      (product) =>
+        product.price >= priceRange[0] && product.price <= priceRange[1]
     );
 
     // Sort products
@@ -95,7 +75,7 @@ export default function ProductsPage() {
     }
 
     setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
+  }, [searchQuery, selectedCategory, priceRange, sortBy]);
 
   const addToCart = (productId) => {
     // Mock cart functionality
@@ -120,7 +100,10 @@ export default function ProductsPage() {
     <Layout>
       <Head>
         <title>Products - MarketPlace</title>
-        <meta name="description" content="Browse thousands of products from trusted sellers" />
+        <meta
+          name="description"
+          content="Browse thousands of products from trusted sellers"
+        />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -128,7 +111,9 @@ export default function ProductsPage() {
         <div className="bg-white shadow-sm border-b">
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Products</h1>
-            <p className="text-gray-600">Discover amazing products from trusted sellers</p>
+            <p className="text-gray-600">
+              Discover amazing products from trusted sellers
+            </p>
           </div>
         </div>
 
@@ -165,7 +150,7 @@ export default function ProductsPage() {
                     Categories
                   </label>
                   <div className="space-y-2">
-                    {categories.map((category) => (
+                    {allCategories.map((category) => (
                       <label key={category.id} className="flex items-center">
                         <input
                           type="radio"
@@ -193,7 +178,9 @@ export default function ProductsPage() {
                     min="0"
                     max="1000"
                     value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    onChange={(e) =>
+                      setPriceRange([priceRange[0], parseInt(e.target.value)])
+                    }
                     className="w-full"
                   />
                 </div>
@@ -218,7 +205,8 @@ export default function ProductsPage() {
 
                 {/* Results Count */}
                 <div className="text-sm text-gray-600">
-                  Showing {filteredProducts.length} of {products.length} products
+                  Showing {filteredProducts.length} of {products.length}{" "}
+                  products
                 </div>
               </div>
             </div>
@@ -227,11 +215,14 @@ export default function ProductsPage() {
             <div className="lg:w-3/4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <div key={product.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                  >
                     {/* Product Image */}
                     <div className="relative">
-                      <img 
-                        src={product.image} 
+                      <img
+                        src={product.image}
                         alt={product.title}
                         className="h-48 w-full object-cover"
                       />
@@ -273,7 +264,8 @@ export default function ProductsPage() {
                       </h3>
 
                       <p className="text-sm text-gray-600 mb-3">
-                        Sold by <span className="font-medium">{product.seller}</span>
+                        Sold by{" "}
+                        <span className="font-medium">{product.seller}</span>
                       </p>
 
                       <div className="flex items-center justify-between mb-4">
@@ -316,8 +308,12 @@ export default function ProductsPage() {
               {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
                   <div className="text-gray-400 text-6xl mb-4">🔍</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                  <p className="text-gray-600">Try adjusting your search or filters</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No products found
+                  </h3>
+                  <p className="text-gray-600">
+                    Try adjusting your search or filters
+                  </p>
                 </div>
               )}
             </div>
