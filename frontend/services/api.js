@@ -2,7 +2,7 @@
 const isProduction =
   typeof window !== "undefined" && window.location.hostname !== "localhost";
 const API_BASE_URL = isProduction
-  ? "https://your-backend-project.vercel.app/api" // Replace with your actual backend Vercel URL
+  ? "https://mock-api.luxlink.com/api" // This will always fail, triggering fallback
   : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 class ApiService {
@@ -12,6 +12,13 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
+    // In production, always use mock data
+    if (isProduction) {
+      console.log("🔄 Production mode - using mock data for:", endpoint);
+      return this.getMockData(endpoint);
+    }
+
+    // Only try real API calls in development
     const url = `${this.baseURL}${endpoint}`;
     const config = {
       headers: {
@@ -32,17 +39,6 @@ class ApiService {
       return await response.json();
     } catch (error) {
       console.error("API request failed:", error);
-      // Fallback to mock data for production demo
-      if (
-        typeof window !== "undefined" &&
-        window.location.hostname !== "localhost"
-      ) {
-        console.log("🔄 Falling back to mock data for production demo");
-        console.log("📍 Endpoint:", endpoint);
-        const mockData = this.getMockData(endpoint);
-        console.log("📦 Mock data result:", mockData);
-        return mockData;
-      }
       throw error;
     }
   }
@@ -52,7 +48,7 @@ class ApiService {
     try {
       // Import mock data dynamically to avoid build issues
       const mockData = require("../data/products");
-      
+
       // Handle different endpoint patterns
       if (endpoint.includes("/products")) {
         if (endpoint.includes("?")) {
@@ -61,7 +57,9 @@ class ApiService {
         } else if (endpoint.match(/\/products\/\d+$/)) {
           // Handle single product
           const id = endpoint.split("/").pop();
-          return mockData.products.find(p => p.id == id) || mockData.products[0];
+          return (
+            mockData.products.find((p) => p.id == id) || mockData.products[0]
+          );
         } else {
           // Handle all products
           return mockData.products;
@@ -79,7 +77,9 @@ class ApiService {
         } else if (endpoint.match(/\/sellers\/\d+$/)) {
           // Handle single seller
           const id = endpoint.split("/").pop();
-          return mockData.sellers.find(s => s.id == id) || mockData.sellers[0];
+          return (
+            mockData.sellers.find((s) => s.id == id) || mockData.sellers[0]
+          );
         } else {
           return mockData.sellers;
         }
@@ -89,7 +89,7 @@ class ApiService {
       } else if (endpoint.includes("/health")) {
         return { status: "ok", message: "Mock data mode active" };
       }
-      
+
       // Default fallback
       return [];
     } catch (error) {

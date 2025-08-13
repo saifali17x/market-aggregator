@@ -41,7 +41,7 @@ export default function AboutPage() {
     name: "Saif Ali",
     role: "Founder & CEO",
     bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers. Saif Ali founded LuxLink with a vision to revolutionize online marketplace experiences through innovative technology and exceptional user experience.",
-    image: "https://postimg.cc/p9K5sLSk", // Saif Ali's professional photo
+    image: "https://i.postimg.cc/TP4jYyJ8/pfp.jpg", // Saif Ali's professional photo
   };
 
   return (
