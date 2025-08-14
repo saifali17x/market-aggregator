@@ -1,10 +1,14 @@
 // API service for backend communication
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+  process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+    ? "http://localhost:3001/api" 
+    : "/api");
 
 class ApiService {
   constructor() {
     console.log("🌐 API Service initialized - connecting to backend");
+    console.log("🔗 API Base URL:", API_BASE_URL);
   }
 
   // Helper method for API calls
