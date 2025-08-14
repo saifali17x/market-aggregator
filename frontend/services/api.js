@@ -1,18 +1,32 @@
 // API service for backend communication
 const getApiBaseUrl = () => {
+  // Force production mode on Vercel
+  if (typeof window !== 'undefined') {
+    // Check if we're on Vercel or any production domain
+    const hostname = window.location.hostname;
+    if (hostname.includes('vercel.app') || hostname.includes('netlify.app') || hostname !== 'localhost') {
+      return '/api';
+    }
+  }
+  
   // If environment variable is set, use it
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-
+  
   // If running in browser, check if we're on localhost
-  if (typeof window !== "undefined") {
-    return window.location.hostname === "localhost"
-      ? "http://localhost:3001/api"
+  if (typeof window !== 'undefined') {
+    return window.location.hostname === 'localhost' 
+      ? "http://localhost:3001/api" 
       : "/api";
   }
-
+  
   // Server-side: default to relative path for production
+  // Also check if we're building for production
+  if (process.env.NODE_ENV === 'production') {
+    return '/api';
+  }
+  
   return "/api";
 };
 
