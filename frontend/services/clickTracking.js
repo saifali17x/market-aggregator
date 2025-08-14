@@ -176,6 +176,73 @@ export const trackPageView = async (options = {}) => {
   }
 };
 
+// Click tracking service for analytics
+export const getListingClickStats = async (listingId) => {
+  try {
+    // Mock data for now - replace with actual API call
+    return {
+      success: true,
+      data: {
+        listingId,
+        clicks: Math.floor(Math.random() * 100) + 10,
+        uniqueVisitors: Math.floor(Math.random() * 50) + 5,
+        conversionRate: (Math.random() * 0.1 + 0.02).toFixed(3),
+        lastClicked: new Date().toISOString()
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching listing click stats:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch click statistics'
+    };
+  }
+};
+
+export const getOverallClickStats = async () => {
+  try {
+    // Mock data for now - replace with actual API call
+    return {
+      success: true,
+      data: {
+        totalClicks: Math.floor(Math.random() * 1000) + 100,
+        totalUniqueVisitors: Math.floor(Math.random() * 500) + 50,
+        averageConversionRate: (Math.random() * 0.15 + 0.05).toFixed(3),
+        topPerformingListings: [
+          { id: 1, title: "iPhone 15 Pro Max", clicks: 156 },
+          { id: 2, title: "MacBook Pro M3", clicks: 142 },
+          { id: 3, title: "Samsung Galaxy S24", clicks: 98 }
+        ]
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching overall click stats:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch overall statistics'
+    };
+  }
+};
+
+export const trackListingClick = async (listingId, userId = null) => {
+  try {
+    // Mock API call to track click
+    console.log(`Tracking click for listing ${listingId} by user ${userId || 'anonymous'}`);
+    
+    // In production, this would send data to your analytics service
+    return {
+      success: true,
+      message: 'Click tracked successfully'
+    };
+  } catch (error) {
+    console.error('Error tracking click:', error);
+    return {
+      success: false,
+      error: 'Failed to track click'
+    };
+  }
+};
+
 export default {
   trackClick,
   trackClickAndOpen,

@@ -125,3 +125,4 @@ coverage/
 # Local development
 .env.local
 .env.development.local
+.vercel
