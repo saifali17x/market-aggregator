@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../components/Layout";
@@ -11,144 +12,41 @@ import {
   MapPin,
   Globe,
 } from "lucide-react";
+import { apiService } from "../services/api";
 
 export default function SellersPage() {
-  const topSellers = [
-    {
-      id: 1,
-      name: "TechStore Pro",
-      logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=80&h=80&fit=crop",
-      coverImage: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop",
-      rating: 4.8,
-      reviewCount: 1247,
-      verified: true,
-      memberSince: "2020",
-      totalSales: 15420,
-      totalProducts: 342,
-      location: "San Francisco, CA",
-      website: "https://techstorepro.com",
-      categories: ["Electronics", "Smartphones", "Laptops"],
-      badges: ["Top Seller", "Fast Shipper", "Verified Store"],
-      description:
-        "Your trusted source for premium electronics and gadgets. We specialize in smartphones, laptops, headphones, and other electronic devices from top brands.",
-      featuredProducts: [
-        "iPhone 15 Pro Max",
-        "Samsung Galaxy S24",
-        "MacBook Pro M3",
-      ],
-    },
-    {
-      id: 2,
-      name: "StyleHub",
-      logo: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80&h=80&fit=crop",
-      coverImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=200&fit=crop",
-      rating: 4.6,
-      reviewCount: 892,
-      verified: true,
-      memberSince: "2019",
-      totalSales: 12340,
-      totalProducts: 234,
-      location: "New York, NY",
-      website: "https://stylehub.com",
-      categories: ["Fashion", "Shoes", "Accessories"],
-      badges: ["Fashion Expert", "Trend Setter", "Verified Store"],
-      description:
-        "Leading fashion retailer offering the latest trends in clothing, shoes, and accessories. We bring you style and quality from around the world.",
-      featuredProducts: [
-        "Nike Air Force 1",
-        "Designer Handbags",
-        "Premium Watches",
-      ],
-    },
-    {
-      id: 3,
-      name: "Home Essentials",
-      logo: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=80&h=80&fit=crop",
-      coverImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop",
-      rating: 4.7,
-      reviewCount: 567,
-      verified: true,
-      memberSince: "2021",
-      totalSales: 8900,
-      totalProducts: 156,
-      location: "Chicago, IL",
-      website: "https://homeessentials.com",
-      categories: ["Home & Garden", "Kitchen", "Furniture"],
-      badges: ["Home Expert", "Quality Assured", "Fast Delivery"],
-      description:
-        "Everything you need for your home and garden. From kitchen appliances to outdoor furniture, we make your home beautiful and functional.",
-      featuredProducts: [
-        "Instant Pot Duo",
-        "Garden Tools",
-        "Kitchen Appliances",
-      ],
-    },
-    {
-      id: 4,
-      name: "Sports Central",
-      logo: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=80&h=80&fit=crop",
-      coverImage: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=200&fit=crop",
-      rating: 4.5,
-      reviewCount: 445,
-      verified: true,
-      memberSince: "2020",
-      totalSales: 6780,
-      totalProducts: 98,
-      location: "Miami, FL",
-      website: "https://sportscentral.com",
-      categories: ["Sports", "Fitness", "Outdoor"],
-      badges: ["Sports Expert", "Equipment Specialist", "Verified Store"],
-      description:
-        "Your one-stop shop for all things sports and fitness. We carry top brands in equipment, apparel, and accessories for every sport.",
-      featuredProducts: [
-        "Fitness Equipment",
-        "Team Sports Gear",
-        "Hiking Equipment",
-      ],
-    },
-    {
-      id: 5,
-      name: "Book Haven",
-      logo: "/api/placeholder/80/80",
-      coverImage: "/api/placeholder/400/200",
-      rating: 4.8,
-      reviewCount: 1234,
-      verified: true,
-      memberSince: "2018",
-      totalSales: 4560,
-      totalProducts: 789,
-      location: "Seattle, WA",
-      website: "https://bookhaven.com",
-      categories: ["Books", "E-readers", "Educational"],
-      badges: ["Book Expert", "Educational Partner", "Verified Store"],
-      description:
-        "Your literary destination for books, e-readers, and educational materials. We believe in the power of knowledge and imagination.",
-      featuredProducts: [
-        "Kindle Paperwhite",
-        "Best Sellers",
-        "Educational Books",
-      ],
-    },
-    {
-      id: 6,
-      name: "Beauty Box",
-      logo: "/api/placeholder/80/80",
-      coverImage: "/api/placeholder/400/200",
-      rating: 4.4,
-      reviewCount: 678,
-      verified: true,
-      memberSince: "2021",
-      totalSales: 3450,
-      totalProducts: 456,
-      location: "Los Angeles, CA",
-      website: "https://beautybox.com",
-      categories: ["Beauty", "Skincare", "Health"],
-      badges: ["Beauty Expert", "Natural Products", "Verified Store"],
-      description:
-        "Premium beauty and health products for your wellness journey. We curate the best products for your beauty and health needs.",
-      featuredProducts: ["Skincare Sets", "Makeup Kits", "Health Supplements"],
-    },
-  ];
+  const [topSellers, setTopSellers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadSellers();
+  }, []);
+
+  const loadSellers = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getSellers();
+      if (response.success && response.data) {
+        setTopSellers(response.data);
+      } else {
+        console.error("Failed to load sellers:", response.error);
+      }
+    } catch (err) {
+      console.error("Error loading sellers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   const stats = [
     { icon: Users, value: "500+", label: "Active Sellers" },
@@ -160,10 +58,10 @@ export default function SellersPage() {
   return (
     <Layout>
       <Head>
-        <title>Top Sellers - LuxLink</title>
+        <title>Top Sellers - SeezyMart</title>
         <meta
           name="description"
-          content="Discover trusted sellers and stores on LuxLink"
+          content="Discover trusted sellers and stores on SeezyMart"
         />
       </Head>
 
@@ -208,10 +106,27 @@ export default function SellersPage() {
                 >
                   {/* Cover Image */}
                   <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
+                    {seller.coverImage && (
+                      <img
+                        src={seller.coverImage}
+                        alt={`${seller.name} cover`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-black/20"></div>
                     <div className="absolute bottom-4 left-4 flex items-center space-x-3">
                       <div className="bg-white rounded-lg p-2">
-                        <div className="bg-gray-200 w-16 h-16 rounded-lg"></div>
+                        {seller.logo ? (
+                          <img
+                            src={seller.logo}
+                            alt={`${seller.name} logo`}
+                            className="w-16 h-16 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="bg-gray-200 w-16 h-16 rounded-lg flex items-center justify-center text-lg text-gray-500 font-bold">
+                            {seller.name.charAt(0)}
+                          </div>
+                        )}
                       </div>
                       <div className="text-white">
                         <h3 className="text-xl font-bold">{seller.name}</h3>
@@ -226,100 +141,125 @@ export default function SellersPage() {
 
                   <div className="p-6">
                     {/* Rating and Stats */}
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                       <div className="flex items-center space-x-2">
                         <div className="flex items-center">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
                               className={`w-4 h-4 ${
-                                i < Math.floor(seller.rating)
+                                i < Math.floor(seller.rating || 0)
                                   ? "text-yellow-400 fill-current"
                                   : "text-gray-300"
                               }`}
                             />
                           ))}
                         </div>
-                        <span className="text-sm text-gray-600">
-                          {seller.rating} ({seller.reviewCount})
+                        <span className="text-sm text-gray-600 ml-2">
+                          {seller.rating || 0} (
+                          {seller.reviewCount
+                            ? seller.reviewCount.toLocaleString()
+                            : 0}
+                          )
                         </span>
                       </div>
-                      <div className="text-right text-sm text-gray-600">
-                        <div>Member since {seller.memberSince}</div>
-                        <div>{seller.totalSales.toLocaleString()} sales</div>
+                      <div className="text-sm text-gray-600 text-right sm:text-left">
+                        {seller.memberSince && (
+                          <div className="font-medium">
+                            Member since {seller.memberSince}
+                          </div>
+                        )}
+                        {seller.totalSales && (
+                          <div className="text-blue-600 font-semibold">
+                            {seller.totalSales.toLocaleString()} sales
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Description */}
-                    <p className="text-gray-700 mb-4 line-clamp-3">
-                      {seller.description}
-                    </p>
+                    {seller.description && (
+                      <p className="text-gray-700 mb-4 leading-relaxed">
+                        {seller.description}
+                      </p>
+                    )}
 
                     {/* Categories */}
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-2">
-                        {seller.categories.map((category) => (
-                          <span
-                            key={category}
-                            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                          >
-                            {category}
-                          </span>
-                        ))}
+                    {seller.categories && seller.categories.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-2">
+                          {seller.categories.map((category) => (
+                            <span
+                              key={category}
+                              className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                            >
+                              {category}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Badges */}
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-2">
-                        {seller.badges.map((badge) => (
-                          <span
-                            key={badge}
-                            className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center"
-                          >
-                            <Award className="w-3 h-3 mr-1" />
-                            {badge}
-                          </span>
-                        ))}
+                    {seller.badges && seller.badges.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-2">
+                          {seller.badges.map((badge) => (
+                            <span
+                              key={badge}
+                              className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center"
+                            >
+                              <Award className="w-3 h-3 mr-1" />
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Location and Website */}
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {seller.location}
-                      </div>
-                      <a
-                        href={seller.website}
-                        className="flex items-center text-blue-600 hover:text-blue-700"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Globe className="w-4 h-4 mr-1" />
-                        Website
-                      </a>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-4 space-y-2 sm:space-y-0">
+                      {seller.location && (
+                        <div className="flex items-center">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {seller.location}
+                        </div>
+                      )}
+                      {seller.website && (
+                        <a
+                          href={seller.website}
+                          className="flex items-center text-blue-600 hover:text-blue-700"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Globe className="w-4 h-4 mr-1" />
+                          Website
+                        </a>
+                      )}
                     </div>
 
                     {/* Featured Products */}
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Featured Products
-                      </h4>
-                      <div className="flex space-x-2">
-                        {seller.featuredProducts.map((product, index) => (
-                          <span
-                            key={index}
-                            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-                          >
-                            {product}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    {seller.featuredProducts &&
+                      seller.featuredProducts.length > 0 && (
+                        <div className="mb-6">
+                          <h4 className="font-semibold text-gray-900 mb-2">
+                            Featured Products
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {seller.featuredProducts.map((product, index) => (
+                              <span
+                                key={index}
+                                className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+                              >
+                                {product}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                     {/* CTA Buttons */}
-                    <div className="flex space-x-3">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                       <Link
                         href={`/seller/${seller.id}`}
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors"

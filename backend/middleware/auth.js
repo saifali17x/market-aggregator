@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
 
-const auth = async (req, res, next) => {
+// Simple auth middleware that accepts any valid JWT token
+const authenticateToken = async (req, res, next) => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
@@ -11,26 +11,20 @@ const auth = async (req, res, next) => {
 
     const token = authHeader.substring(7);
 
-    // Verify token
+    // Verify token (using a simple secret for now)
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "your-secret-key"
     );
 
-    // Check if it's an admin token
-    if (decoded.isAdmin) {
-      req.user = { username: decoded.username, role: "admin", isAdmin: true };
-      return next();
-    }
+    // Add user info to request object
+    req.user = {
+      id: decoded.userId || decoded.id || 1,
+      username: decoded.username || "user",
+      role: decoded.role || "user",
+      isAdmin: decoded.isAdmin || false,
+    };
 
-    // Get user data for regular users
-    const user = await User.findByPk(decoded.userId);
-    if (!user || !user.isActive) {
-      return res.status(401).json({ error: "Invalid or expired token" });
-    }
-
-    // Add user to request object
-    req.user = user;
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
@@ -67,7 +61,11 @@ const requireAdmin = async (req, res, next) => {
       return res.status(403).json({ error: "Admin access required" });
     }
 
-    req.user = { username: decoded.username, role: "admin", isAdmin: true };
+    req.user = {
+      username: decoded.username || "admin",
+      role: "admin",
+      isAdmin: true,
+    };
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
@@ -93,40 +91,26 @@ const optionalAuth = async (req, res, next) => {
         process.env.JWT_SECRET || "your-secret-key"
       );
 
-      if (decoded.isAdmin) {
-        req.user = { username: decoded.username, role: "admin", isAdmin: true };
-      } else {
-        const user = await User.findByPk(decoded.userId);
-        if (user && user.isActive) {
-          req.user = user;
-        }
-      }
+      req.user = {
+        id: decoded.userId || decoded.id || 1,
+        username: decoded.username || "user",
+        role: decoded.role || "user",
+        isAdmin: decoded.isAdmin || false,
+      };
+    } else {
+      req.user = null;
     }
     next();
   } catch (error) {
-    // Continue without user if token is invalid
+    // If token is invalid, just continue without user
+    req.user = null;
     next();
   }
 };
 
-// Role-based authorization middleware
-const requireRole = (roles) => {
-  return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
-
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: "Insufficient permissions" });
-    }
-
-    next();
-  };
-};
-
 module.exports = {
-  auth,
+  authenticateToken,
   requireAdmin,
   optionalAuth,
-  requireRole,
+  auth: authenticateToken, // For backward compatibility
 };

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting LuxLink Portfolio Project..."
+echo "🚀 Starting SeezyMart Portfolio Project..."
 echo "=================================================="
 
 # Check if Docker is running

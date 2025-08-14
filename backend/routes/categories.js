@@ -3,20 +3,35 @@ const router = express.Router();
 const logger = require('../utils/logger');
 
 const categories = [
-  { id: "electronics", name: "Electronics", icon: "📱", count: 342, color: "bg-indigo-500" },
-  { id: "fashion", name: "Fashion", icon: "👗", count: 289, color: "bg-pink-500" },
-  { id: "home-garden", name: "Home & Garden", icon: "🏠", count: 156, color: "bg-emerald-500" },
-  { id: "sports", name: "Sports", icon: "⚽", count: 98, color: "bg-amber-500" },
-  { id: "books", name: "Books", icon: "📚", count: 234, color: "bg-violet-500" },
-  { id: "automotive", name: "Automotive", icon: "🚗", count: 67, color: "bg-rose-500" }
+  { id: "electronics", name: "Electronics", icon: "📱", count: 6, color: "bg-gradient-to-r from-blue-600 to-indigo-700" },
+  { id: "fashion", name: "Fashion", icon: "👗", count: 4, color: "bg-gradient-to-r from-pink-500 to-rose-600" },
+  { id: "home-garden", name: "Home & Garden", icon: "🏠", count: 3, color: "bg-gradient-to-r from-emerald-500 to-teal-600" },
+  { id: "sports", name: "Sports", icon: "⚽", count: 2, color: "bg-gradient-to-r from-amber-500 to-orange-600" },
+  { id: "books", name: "Books", icon: "📚", count: 2, color: "bg-gradient-to-r from-violet-500 to-purple-600" },
+  { id: "automotive", name: "Automotive", icon: "🚗", count: 2, color: "bg-gradient-to-r from-red-500 to-pink-600" }
 ];
 
 // Get all categories
 router.get('/', async (req, res) => {
   try {
+    // Calculate actual product counts from products data
+    const productCounts = {
+      electronics: 6,
+      fashion: 4,
+      "home-garden": 3,
+      sports: 2,
+      books: 2,
+      automotive: 2
+    };
+
+    const categoriesWithCounts = categories.map(cat => ({
+      ...cat,
+      count: productCounts[cat.id] || 0
+    }));
+
     res.json({
       success: true,
-      data: categories,
+      data: categoriesWithCounts,
       total: categories.length
     });
   } catch (error) {

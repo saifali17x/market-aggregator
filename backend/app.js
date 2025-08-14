@@ -7,17 +7,21 @@ const morgan = require("morgan");
 
 // Import routes
 const authRoutes = require("./routes/auth");
-const listingRoutes = require("./routes/listings");
+// const listingRoutes = require("./routes/listings"); // Temporarily disabled - requires database
 const sellerRoutes = require("./routes/sellers");
 const categoryRoutes = require("./routes/categories");
-const importRoutes = require("./routes/import");
+// const importRoutes = require("./routes/import"); // Temporarily disabled - requires database
 const productRoutes = require("./routes/products");
-const searchRoutes = require("./routes/search");
+// const searchRoutes = require("./routes/search"); // Temporarily disabled - requires database
 const healthRoutes = require("./routes/health");
+const profileRoutes = require("./routes/profile");
+const orderRoutes = require("./routes/orders");
+const cartRoutes = require("./routes/cart");
+const checkoutRoutes = require("./routes/checkout");
 // Temporarily disabled to get basic API running
 // const scraperRoutes = require("./routes/scraper");
-const trackingRoutes = require("./routes/tracking");
-const adminRoutes = require("./routes/admin");
+// const trackingRoutes = require("./routes/tracking"); // Temporarily disabled - requires database
+// const adminRoutes = require("./routes/admin"); // Temporarily disabled - requires database
 // Temporarily disabled to get basic API running
 // const adminScrapingRoutes = require("./routes/admin/scraping");
 // Temporarily disabled to get basic API running
@@ -124,7 +128,8 @@ app.get("/api", (req, res) => {
       products: {
         getAll: "GET /api/products",
         getById: "GET /api/products/:id",
-        search: "GET /api/products?category=&search=&minPrice=&maxPrice=&sortBy=",
+        search:
+          "GET /api/products?category=&search=&minPrice=&maxPrice=&sortBy=",
       },
       categories: {
         getAll: "GET /api/categories",
@@ -162,17 +167,21 @@ app.get("/api", (req, res) => {
 
 // API routes
 app.use("/api/auth", authRoutes);
-app.use("/api/listings", listingRoutes);
+// app.use("/api/listings", listingRoutes); // Temporarily disabled
 app.use("/api/sellers", sellerRoutes);
 app.use("/api/categories", categoryRoutes);
-app.use("/api/import", importRoutes);
+// app.use("/api/import", importRoutes); // Temporarily disabled
 app.use("/api/products", productRoutes);
-app.use("/api/search", searchRoutes);
+// app.use("/api/search", searchRoutes); // Temporarily disabled
 app.use("/api/health", healthRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/checkout", checkoutRoutes);
 // Temporarily disabled to get basic API running
 // app.use("/api/scraper", scraperRoutes);
-app.use("/api/track", trackingRoutes);
-app.use("/api/admin", adminRoutes);
+// app.use("/api/track", trackingRoutes); // Temporarily disabled
+// app.use("/api/admin", adminRoutes); // Temporarily disabled
 // Temporarily disabled to get basic API running
 // app.use("/api/admin/scraping", adminScrapingRoutes);
 // Temporarily disabled to get basic API running
@@ -202,6 +211,20 @@ app.use("/api/*", (req, res) => {
       "GET /api/listings/search/suggestions",
       "GET /api/listings/categories/popular",
       "GET /api/listings/stats/overview",
+      "GET /api/profile",
+      "PUT /api/profile",
+      "GET /api/orders",
+      "GET /api/orders/:id",
+      "POST /api/orders",
+      "GET /api/cart",
+      "POST /api/cart/add",
+      "PUT /api/cart/update/:itemId",
+      "DELETE /api/cart/remove/:itemId",
+      "DELETE /api/cart/clear",
+      "POST /api/checkout",
+      "GET /api/checkout/shipping-options",
+      "POST /api/checkout/validate-address",
+      "POST /api/checkout/calculate-tax",
       "GET /api/admin/cache",
       "GET /api/admin/scraping/jobs",
       "GET /api/admin/sellers",
@@ -221,14 +244,7 @@ app.use("*", (req, res) => {
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
-// Start server only if not in Vercel environment
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📚 API Documentation: http://localhost:${PORT}/api`);
-  });
-}
+// Server startup is handled by server.js
 
 // Export for Vercel serverless
 module.exports = app;

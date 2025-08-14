@@ -40,17 +40,17 @@ export default function AboutPage() {
   const founder = {
     name: "Saif Ali",
     role: "Founder & CEO",
-    bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers. Saif Ali founded LuxLink with a vision to revolutionize online marketplace experiences through innovative technology and exceptional user experience.",
+    bio: "Passionate about creating seamless shopping experiences and connecting buyers with trusted sellers. Saif Ali founded SeezyMart with a vision to revolutionize online marketplace experiences through innovative technology and exceptional user experience.",
     image: "https://i.postimg.cc/TP4jYyJ8/pfp.jpg", // Saif Ali's professional photo
   };
 
   return (
     <Layout>
       <Head>
-        <title>About Us - LuxLink</title>
+        <title>About Us - SeezyMart</title>
         <meta
           name="description"
-          content="Learn about LuxLink and our mission to connect buyers with trusted sellers"
+          content="Learn about SeezyMart and our mission to connect buyers with trusted sellers"
         />
       </Head>
 
@@ -59,7 +59,7 @@ export default function AboutPage() {
         <section className="relative bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About LuxLink
+              About SeezyMart
             </h1>
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
               We're building the future of online shopping by creating a
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 Our Mission
               </h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                At LuxLink, we believe that everyone deserves access to quality
+                At SeezyMart, we believe that everyone deserves access to quality
                 products from trusted sellers. Our mission is to create a
                 seamless, secure, and enjoyable shopping experience that
                 connects buyers with the best products and sellers in the world.
@@ -111,7 +111,7 @@ export default function AboutPage() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Why Choose LuxLink?
+              Why Choose SeezyMart?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {features.map((feature, index) => (
