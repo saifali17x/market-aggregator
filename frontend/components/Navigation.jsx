@@ -21,7 +21,7 @@ export default function Navigation() {
   useEffect(() => {
     const loadCartCount = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/cart");
+        const response = await fetch("/api/cart");
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.data) {

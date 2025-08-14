@@ -1,9 +1,22 @@
 // API service for backend communication
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 
-  (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-    ? "http://localhost:3001/api" 
-    : "/api");
+const getApiBaseUrl = () => {
+  // If environment variable is set, use it
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // If running in browser, check if we're on localhost
+  if (typeof window !== "undefined") {
+    return window.location.hostname === "localhost"
+      ? "http://localhost:3001/api"
+      : "/api";
+  }
+
+  // Server-side: default to relative path for production
+  return "/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class ApiService {
   constructor() {
