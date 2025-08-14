@@ -1,32 +1,20 @@
 // API service for backend communication
 const getApiBaseUrl = () => {
-  // Force /api for production builds
-  if (process.env.NODE_ENV === 'production') {
-    return '/api';
-  }
-  
-  // Force /api for Vercel deployments
-  if (typeof window !== 'undefined') {
+  // Always use /api for Vercel deployments
+  if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    if (hostname.includes('vercel.app') || hostname.includes('netlify.app')) {
-      return '/api';
+    if (hostname.includes("vercel.app") || hostname !== "localhost") {
+      return "/api";
     }
   }
-  
+
   // If environment variable is set, use it
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  
-  // If running in browser, check if we're on localhost
-  if (typeof window !== 'undefined') {
-    return window.location.hostname === 'localhost' 
-      ? "http://localhost:3001/api" 
-      : "/api";
-  }
-  
-  // Default to relative path
-  return "/api";
+
+  // Default to localhost for development
+  return "http://localhost:3001/api";
 };
 
 const API_BASE_URL = getApiBaseUrl();
