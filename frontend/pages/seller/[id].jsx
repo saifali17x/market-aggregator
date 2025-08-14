@@ -29,37 +29,57 @@ export default function SellerProfilePage() {
   const [activeTab, setActiveTab] = useState("products");
 
   useEffect(() => {
+    console.log("🔄 Seller page useEffect triggered");
+    console.log("📋 Router query:", router.query);
+    console.log("🆔 ID from router:", id);
+    console.log("🆔 ID type:", typeof id);
+
     if (id) {
+      console.log("✅ ID exists, calling loadSellerData");
       loadSellerData();
+    } else {
+      console.log("❌ No ID found in router query");
     }
-  }, [id]);
+  }, [id, router.query]);
 
   const loadSellerData = async () => {
     try {
       setLoading(true);
+      console.log("🔄 Starting to load seller data for ID:", id);
 
       // Load seller data
+      console.log("📞 Calling getSeller API with ID:", parseInt(id));
       const sellerResponse = await apiService.getSeller(parseInt(id));
+      console.log("📦 Seller API response:", sellerResponse);
+
       if (sellerResponse.success && sellerResponse.data) {
+        console.log("✅ Seller loaded successfully:", sellerResponse.data.name);
         setSeller(sellerResponse.data);
       } else {
-        console.error("Failed to load seller:", sellerResponse.error);
-        return;
+        console.error("❌ Failed to load seller:", sellerResponse.error);
+        console.error("❌ Full response:", sellerResponse);
+        // Don't return here, continue to try loading products
       }
 
       // Load seller products
+      console.log("🔄 Loading seller products for seller ID:", id);
       const productsResponse = await apiService.getSellerProducts(parseInt(id));
+      console.log("📦 Seller products API response:", productsResponse);
+
       if (productsResponse.success && productsResponse.data) {
+        console.log(
+          `✅ Loaded ${productsResponse.data.length} seller products`
+        );
         setProducts(productsResponse.data);
       } else {
         console.error(
-          "Failed to load seller products:",
+          "❌ Failed to load seller products:",
           productsResponse.error
         );
         setProducts([]);
       }
     } catch (err) {
-      console.error("Error loading seller data:", err);
+      console.error("❌ Error loading seller data:", err);
     } finally {
       setLoading(false);
     }
@@ -82,8 +102,16 @@ export default function SellerProfilePage() {
             Seller not found
           </h3>
           <p className="text-gray-600">
-            The seller you're looking for doesn't exist
+            The seller you're looking for doesn't exist or failed to load
           </p>
+          <div className="mt-4">
+            <Link
+              href="/sellers"
+              className="text-blue-600 hover:text-blue-700 underline"
+            >
+              ← Back to Sellers
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -93,7 +121,7 @@ export default function SellerProfilePage() {
     <Layout>
       <Head>
         <title>{seller.name} - MarketPlace</title>
-        <meta name="description" content={seller.tagline} />
+        <meta name="description" content={seller.description} />
       </Head>
 
       <div className="min-h-screen bg-gray-50">

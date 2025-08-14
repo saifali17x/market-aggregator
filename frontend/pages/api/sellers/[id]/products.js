@@ -569,6 +569,8 @@ export default function handler(req, res) {
   if (req.method === 'GET') {
     const { id } = req.query;
     
+    console.log("🔄 Seller products API called with ID:", id);
+    
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -578,6 +580,7 @@ export default function handler(req, res) {
 
     // Find the seller by ID
     const sellerId = parseInt(id);
+    console.log("🔍 Looking for seller ID:", sellerId);
     
     // Filter products by seller ID (matching the seller names from products)
     const sellerProducts = mockProducts.filter(product => {
@@ -599,8 +602,17 @@ export default function handler(req, res) {
         14: "Home Essentials"
       };
       
-      return product.seller === sellerMap[sellerId];
+      const sellerName = sellerMap[sellerId];
+      const matches = product.seller === sellerName;
+      
+      if (matches) {
+        console.log(`✅ Product "${product.title}" matches seller "${sellerName}"`);
+      }
+      
+      return matches;
     });
+
+    console.log(`📦 Found ${sellerProducts.length} products for seller ID ${sellerId}`);
 
     if (sellerProducts.length === 0) {
       return res.status(404).json({

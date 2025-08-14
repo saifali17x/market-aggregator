@@ -19,9 +19,34 @@ export default function ProductsPage() {
   const [allCategories, setAllCategories] = useState([]);
   const [addingToCart, setAddingToCart] = useState(null);
 
+  // Consolidated category mappings for consistent filtering and counting
+  const categoryMappings = {
+    smartphones: "smartphones",
+    laptops: "laptops",
+    audio: "audio",
+    "tv-home-theater": "tv",
+    wearables: "wearables",
+    "cameras-photography": "cameras",
+    gaming: "gaming",
+    "drones-aerial": "drones",
+    footwear: "footwear",
+    clothing: "clothing",
+    accessories: "accessories",
+    "smart-home": "lighting",
+    "cleaning-appliances": "cleaning",
+  };
+
   useEffect(() => {
-    loadProducts();
-    loadCategories();
+    const loadData = async () => {
+      try {
+        // Load products first, then categories
+        await loadProducts();
+        await loadCategories();
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    };
+    loadData();
   }, []);
 
   // Handle URL query parameters for category filtering and search
@@ -37,10 +62,19 @@ export default function ProductsPage() {
   const loadProducts = async () => {
     try {
       setLoading(true);
+      console.log("🔄 Loading products...");
       const response = await apiService.getProducts();
+      console.log("📦 Products API response:", response);
+
       if (response.success && response.data) {
+        console.log(`✅ Loaded ${response.data.length} products`);
         setProducts(response.data);
         setFilteredProducts(response.data);
+        
+        // Calculate category counts if categories are already loaded
+        if (categories.length > 0) {
+          calculateCategoryCounts(categories, response.data);
+        }
       } else {
         console.error("Failed to load products:", response.error);
       }
@@ -53,18 +87,69 @@ export default function ProductsPage() {
 
   const loadCategories = async () => {
     try {
+      console.log("🔄 Loading categories...");
       const response = await apiService.getCategories();
+      console.log("🏷️ Categories API response:", response);
+
       if (response.success && response.data) {
+        console.log(`✅ Loaded ${response.data.length} categories`);
         setCategories(response.data);
-        const categoriesWithAll = [
-          { id: "all", name: "All Categories", count: products.length },
-          ...response.data,
-        ];
-        setAllCategories(categoriesWithAll);
+        
+        // Calculate category counts after categories are loaded
+        if (products.length > 0) {
+          calculateCategoryCounts(response.data, products);
+        }
       }
     } catch (err) {
       console.error("Error loading categories:", err);
     }
+  };
+
+  // Function to calculate category counts
+  const calculateCategoryCounts = (categoriesData, productsData) => {
+    console.log("🔄 Calculating category counts...");
+    
+    const updatedCategories = categoriesData.map((cat) => {
+      let count = 0;
+
+      // Count products for this category
+      productsData.forEach((product) => {
+        // Check if product belongs to main category
+        if (product.category === cat.slug) {
+          count++;
+        }
+        // Check if product belongs to subcategory
+        else if (product.subcategory === cat.slug) {
+          count++;
+        }
+        // Handle specific category mappings
+        else {
+          if (
+            categoryMappings[cat.slug] &&
+            product.subcategory === categoryMappings[cat.slug]
+          ) {
+            count++;
+          }
+        }
+      });
+
+      console.log(`🏷️ Category ${cat.slug}: ${count} products`);
+
+      return {
+        ...cat,
+        count: count,
+      };
+    });
+
+    setCategories(updatedCategories);
+
+    const categoriesWithAll = [
+      { id: "all", name: "All Categories", count: productsData.length },
+      ...updatedCategories,
+    ];
+    setAllCategories(categoriesWithAll);
+
+    console.log("✅ Category counts calculated successfully");
   };
 
   useEffect(() => {
@@ -92,23 +177,6 @@ export default function ProductsPage() {
         if (product.subcategory === selectedCategory) {
           return true;
         }
-
-        // Handle specific category mappings
-        const categoryMappings = {
-          smartphones: "smartphones",
-          laptops: "laptops",
-          audio: "audio",
-          "tv-home-theater": "tv",
-          wearables: "wearables",
-          "cameras-photography": "cameras",
-          gaming: "gaming",
-          "drones-aerial": "drones",
-          footwear: "footwear",
-          clothing: "clothing",
-          accessories: "accessories",
-          "smart-home": "lighting",
-          "cleaning-appliances": "cleaning",
-        };
 
         // Check if the selected category maps to a subcategory
         if (
@@ -150,61 +218,8 @@ export default function ProductsPage() {
     setFilteredProducts(filtered);
   }, [searchQuery, selectedCategory, priceRange, sortBy, products]);
 
-  // Update category counts when products change
-  useEffect(() => {
-    if (categories.length > 0 && products.length > 0) {
-      const updatedCategories = categories.map((cat) => {
-        let count = 0;
-        
-        // Count products for this category
-        products.forEach((product) => {
-          // Check if product belongs to main category
-          if (product.category === cat.slug) {
-            count++;
-          }
-          // Check if product belongs to subcategory
-          else if (product.subcategory === cat.slug) {
-            count++;
-          }
-          // Handle specific category mappings
-          else {
-            const categoryMappings = {
-              'smartphones': 'smartphones',
-              'laptops': 'laptops', 
-              'audio': 'audio',
-              'tv-home-theater': 'tv',
-              'wearables': 'wearables',
-              'cameras-photography': 'cameras',
-              'gaming': 'gaming',
-              'drones-aerial': 'drones',
-              'footwear': 'footwear',
-              'clothing': 'clothing',
-              'accessories': 'accessories',
-              'smart-home': 'lighting',
-              'cleaning-appliances': 'cleaning'
-            };
-            
-            if (categoryMappings[cat.slug] && product.subcategory === categoryMappings[cat.slug]) {
-              count++;
-            }
-          }
-        });
-        
-        return {
-          ...cat,
-          count: count,
-        };
-      });
-      
-      setCategories(updatedCategories);
-
-      const categoriesWithAll = [
-        { id: "all", name: "All Categories", count: products.length },
-        ...updatedCategories,
-      ];
-      setAllCategories(categoriesWithAll);
-    }
-  }, [products, categories.length]);
+  // Category counts are now calculated directly in loadProducts and loadCategories
+  // to avoid timing issues and ensure proper data flow
 
   const addToCart = async (product) => {
     try {

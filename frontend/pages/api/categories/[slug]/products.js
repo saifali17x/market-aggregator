@@ -569,6 +569,8 @@ export default function handler(req, res) {
   if (req.method === 'GET') {
     const { slug } = req.query;
     
+    console.log("🔄 Category products API called with slug:", slug);
+    
     if (!slug) {
       return res.status(400).json({
         success: false,
@@ -631,6 +633,8 @@ export default function handler(req, res) {
       // If no specific category matches, return empty array
       categoryProducts = [];
     }
+
+    console.log(`📦 Found ${categoryProducts.length} products for category "${slug}"`);
 
     if (categoryProducts.length === 0) {
       return res.status(404).json({

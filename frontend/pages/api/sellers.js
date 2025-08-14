@@ -230,15 +230,22 @@ export default function handler(req, res) {
   if (req.method === 'GET') {
     const { id } = req.query;
     
+    console.log("🔄 Sellers API called with ID:", id);
+    
     if (id) {
       // Return specific seller
-      const seller = mockSellers.find(s => s.id === parseInt(id));
+      const sellerId = parseInt(id);
+      console.log("🔍 Looking for seller ID:", sellerId);
+      
+      const seller = mockSellers.find(s => s.id === sellerId);
       if (seller) {
+        console.log(`✅ Found seller: ${seller.name}`);
         res.status(200).json({
           success: true,
           data: seller
         });
       } else {
+        console.log(`❌ Seller with ID ${sellerId} not found`);
         res.status(404).json({
           success: false,
           error: "Seller not found"
@@ -246,6 +253,7 @@ export default function handler(req, res) {
       }
     } else {
       // Return all sellers
+      console.log("📋 Returning all sellers");
       res.status(200).json({
         success: true,
         data: mockSellers
