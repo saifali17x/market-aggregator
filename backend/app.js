@@ -9,7 +9,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-// Basic routes
+// Basic routes - completely self-contained
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Backend is running" });
 });
