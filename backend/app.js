@@ -248,3 +248,13 @@ app.use(errorHandler);
 
 // Export for Vercel serverless
 module.exports = app;
+
+// Start server if running directly
+if (require.main === module) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`�� API Documentation: http://localhost:${PORT}/api`);
+    console.log(`�� Health Check: http://localhost:${PORT}/health`);
+  });
+}
