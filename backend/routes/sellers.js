@@ -420,23 +420,8 @@ router.get("/:id/products", async (req, res) => {
     // Import the products array directly
     const { products: allProducts } = require("./products");
 
-    // Filter products by seller name and map to the format expected by frontend
-    const sellerProducts = allProducts
-      .filter((product) => product.seller === seller.name)
-      .map((product) => ({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        image: product.image,
-        category: product.category,
-        rating: product.rating,
-        reviewCount: product.reviewCount,
-        views: product.views,
-        sales: product.sales,
-        discount: product.discount,
-        inStock: product.inStock,
-      }));
+    // Filter products by seller name and return complete product data
+    const sellerProducts = allProducts.filter((product) => product.seller === seller.name);
 
     res.json({
       success: true,

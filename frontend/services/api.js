@@ -1,16 +1,16 @@
 // API service for backend communication
 const getApiBaseUrl = () => {
-  // Always use /api for Vercel deployments
+  // If environment variable is set, use it (for production backend)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // Always use /api for Vercel deployments (mock APIs)
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname.includes("vercel.app") || hostname !== "localhost") {
       return "/api";
     }
-  }
-
-  // If environment variable is set, use it
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
   }
 
   // Default to localhost for development
