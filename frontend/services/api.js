@@ -1,10 +1,14 @@
 // API service for backend communication
 const getApiBaseUrl = () => {
-  // Force production mode on Vercel
+  // Force /api for production builds
+  if (process.env.NODE_ENV === 'production') {
+    return '/api';
+  }
+  
+  // Force /api for Vercel deployments
   if (typeof window !== 'undefined') {
-    // Check if we're on Vercel or any production domain
     const hostname = window.location.hostname;
-    if (hostname.includes('vercel.app') || hostname.includes('netlify.app') || hostname !== 'localhost') {
+    if (hostname.includes('vercel.app') || hostname.includes('netlify.app')) {
       return '/api';
     }
   }
@@ -21,12 +25,7 @@ const getApiBaseUrl = () => {
       : "/api";
   }
   
-  // Server-side: default to relative path for production
-  // Also check if we're building for production
-  if (process.env.NODE_ENV === 'production') {
-    return '/api';
-  }
-  
+  // Default to relative path
   return "/api";
 };
 
