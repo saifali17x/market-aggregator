@@ -80,11 +80,46 @@ export default function ProductsPage() {
       );
     }
 
-    // Category filter - fix the filtering logic
+    // Category filter - fix the filtering logic to handle both categories and subcategories
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
+      filtered = filtered.filter((product) => {
+        // Check if the selected category matches the product's main category
+        if (product.category === selectedCategory) {
+          return true;
+        }
+
+        // Check if the selected category matches the product's subcategory
+        if (product.subcategory === selectedCategory) {
+          return true;
+        }
+
+        // Handle specific category mappings
+        const categoryMappings = {
+          smartphones: "smartphones",
+          laptops: "laptops",
+          audio: "audio",
+          "tv-home-theater": "tv",
+          wearables: "wearables",
+          "cameras-photography": "cameras",
+          gaming: "gaming",
+          "drones-aerial": "drones",
+          footwear: "footwear",
+          clothing: "clothing",
+          accessories: "accessories",
+          "smart-home": "lighting",
+          "cleaning-appliances": "cleaning",
+        };
+
+        // Check if the selected category maps to a subcategory
+        if (
+          categoryMappings[selectedCategory] &&
+          product.subcategory === categoryMappings[selectedCategory]
+        ) {
+          return true;
+        }
+
+        return false;
+      });
     }
 
     // Price filter
@@ -118,10 +153,49 @@ export default function ProductsPage() {
   // Update category counts when products change
   useEffect(() => {
     if (categories.length > 0 && products.length > 0) {
-      const updatedCategories = categories.map((cat) => ({
-        ...cat,
-        count: products.filter((p) => p.category === cat.id).length,
-      }));
+      const updatedCategories = categories.map((cat) => {
+        let count = 0;
+        
+        // Count products for this category
+        products.forEach((product) => {
+          // Check if product belongs to main category
+          if (product.category === cat.slug) {
+            count++;
+          }
+          // Check if product belongs to subcategory
+          else if (product.subcategory === cat.slug) {
+            count++;
+          }
+          // Handle specific category mappings
+          else {
+            const categoryMappings = {
+              'smartphones': 'smartphones',
+              'laptops': 'laptops', 
+              'audio': 'audio',
+              'tv-home-theater': 'tv',
+              'wearables': 'wearables',
+              'cameras-photography': 'cameras',
+              'gaming': 'gaming',
+              'drones-aerial': 'drones',
+              'footwear': 'footwear',
+              'clothing': 'clothing',
+              'accessories': 'accessories',
+              'smart-home': 'lighting',
+              'cleaning-appliances': 'cleaning'
+            };
+            
+            if (categoryMappings[cat.slug] && product.subcategory === categoryMappings[cat.slug]) {
+              count++;
+            }
+          }
+        });
+        
+        return {
+          ...cat,
+          count: count,
+        };
+      });
+      
       setCategories(updatedCategories);
 
       const categoriesWithAll = [

@@ -576,30 +576,61 @@ export default function handler(req, res) {
       });
     }
 
-    // Filter products by category
-    const categoryProducts = mockProducts.filter(product => {
-      // Handle category mapping
-      const categoryMap = {
-        'electronics': 'electronics',
-        'smartphones': 'electronics',
-        'laptops': 'electronics',
-        'audio': 'electronics',
-        'tv-home-theater': 'electronics',
-        'wearables': 'electronics',
-        'cameras-photography': 'electronics',
-        'gaming': 'electronics',
-        'drones-aerial': 'electronics',
-        'fashion': 'fashion',
-        'footwear': 'fashion',
-        'clothing': 'fashion',
-        'accessories': 'fashion',
-        'home-garden': 'home-garden',
-        'smart-home': 'home-garden',
-        'cleaning-appliances': 'home-garden'
-      };
-      
-      return product.category === categoryMap[slug] || product.category === slug;
-    });
+    // Filter products by category with proper mapping
+    let categoryProducts = [];
+    
+    if (slug === 'electronics') {
+      // Return all electronics products (10 products)
+      categoryProducts = mockProducts.filter(product => product.category === 'electronics');
+    } else if (slug === 'smartphones') {
+      // Return smartphone products (2 products)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'smartphones');
+    } else if (slug === 'laptops') {
+      // Return laptop products (2 products)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'laptops');
+    } else if (slug === 'audio') {
+      // Return audio products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'audio');
+    } else if (slug === 'tv-home-theater') {
+      // Return TV products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'tv');
+    } else if (slug === 'wearables') {
+      // Return wearable products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'wearables');
+    } else if (slug === 'cameras-photography') {
+      // Return camera products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'cameras');
+    } else if (slug === 'gaming') {
+      // Return gaming products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'gaming');
+    } else if (slug === 'drones-aerial') {
+      // Return drone products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'drones');
+    } else if (slug === 'fashion') {
+      // Return all fashion products (4 products)
+      categoryProducts = mockProducts.filter(product => product.category === 'fashion');
+    } else if (slug === 'footwear') {
+      // Return footwear products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'footwear');
+    } else if (slug === 'clothing') {
+      // Return clothing products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'clothing');
+    } else if (slug === 'accessories') {
+      // Return accessory products (2 products)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'accessories');
+    } else if (slug === 'home-garden') {
+      // Return all home & garden products (2 products)
+      categoryProducts = mockProducts.filter(product => product.category === 'home-garden');
+    } else if (slug === 'smart-home') {
+      // Return smart home products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'lighting');
+    } else if (slug === 'cleaning-appliances') {
+      // Return cleaning products (1 product)
+      categoryProducts = mockProducts.filter(product => product.subcategory === 'cleaning');
+    } else {
+      // If no specific category matches, return empty array
+      categoryProducts = [];
+    }
 
     if (categoryProducts.length === 0) {
       return res.status(404).json({
