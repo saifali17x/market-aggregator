@@ -70,7 +70,7 @@ export default function ProductsPage() {
         console.log(`✅ Loaded ${response.data.length} products`);
         setProducts(response.data);
         setFilteredProducts(response.data);
-        
+
         // Calculate category counts if categories are already loaded
         if (categories.length > 0) {
           calculateCategoryCounts(categories, response.data);
@@ -94,7 +94,7 @@ export default function ProductsPage() {
       if (response.success && response.data) {
         console.log(`✅ Loaded ${response.data.length} categories`);
         setCategories(response.data);
-        
+
         // Calculate category counts after categories are loaded
         if (products.length > 0) {
           calculateCategoryCounts(response.data, products);
@@ -108,7 +108,7 @@ export default function ProductsPage() {
   // Function to calculate category counts
   const calculateCategoryCounts = (categoriesData, productsData) => {
     console.log("🔄 Calculating category counts...");
-    
+
     const updatedCategories = categoriesData.map((cat) => {
       let count = 0;
 
@@ -318,8 +318,52 @@ export default function ProductsPage() {
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 mb-3">Category</h4>
                   <div className="space-y-2">
-                    {allCategories.map((category) => (
-                      <label key={category.id} className="flex items-center">
+                    {/* All Categories Option */}
+                    <label
+                      className={`flex items-center p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                        selectedCategory === "all"
+                          ? "bg-blue-50 border border-blue-200"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="category"
+                        value="all"
+                        checked={selectedCategory === "all"}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      />
+                      <span
+                        className={`ml-3 font-medium ${
+                          selectedCategory === "all"
+                            ? "text-blue-700"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        All Categories
+                      </span>
+                      <span
+                        className={`ml-auto text-sm px-2 py-1 rounded-full ${
+                          selectedCategory === "all"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {products.length}
+                      </span>
+                    </label>
+
+                    {/* Individual Categories */}
+                    {categories.map((category) => (
+                      <label
+                        key={category.id}
+                        className={`flex items-center p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                          selectedCategory === category.id
+                            ? "bg-blue-50 border border-blue-200"
+                            : "hover:bg-gray-50"
+                        }`}
+                      >
                         <input
                           type="radio"
                           name="category"
@@ -328,8 +372,24 @@ export default function ProductsPage() {
                           onChange={(e) => setSelectedCategory(e.target.value)}
                           className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-gray-700">
-                          {category.name} ({category.count})
+                        <span
+                          className={`ml-3 flex items-center ${
+                            selectedCategory === category.id
+                              ? "text-blue-700"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          <span className="mr-2">{category.icon}</span>
+                          {category.name}
+                        </span>
+                        <span
+                          className={`ml-auto text-sm px-2 py-1 rounded-full ${
+                            selectedCategory === category.id
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {category.count}
                         </span>
                       </label>
                     ))}
@@ -407,12 +467,136 @@ export default function ProductsPage() {
                 </div>
               </div>
 
+              {/* Mobile Category List (visible on small screens) */}
+              <div className="mb-6 lg:hidden">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
+                  {selectedCategory !== "all" && (
+                    <button
+                      onClick={() => setSelectedCategory("all")}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {/* All Categories Button */}
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                      selectedCategory === "all"
+                        ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-200"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    All ({products.length})
+                  </button>
+                  
+                  {/* Individual Category Buttons */}
+                  {loading ? (
+                    <div className="flex items-center space-x-2 px-3 py-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <span className="text-gray-500">Loading...</span>
+                    </div>
+                  ) : (
+                    categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
+                          selectedCategory === category.id
+                            ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-200"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        <span>{category.icon}</span>
+                        <span>{category.name}</span>
+                        <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-xs font-bold">
+                          {category.count}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Desktop Category List (visible on larger screens) */}
+              <div className="mb-6 hidden lg:block">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
+                  {selectedCategory !== "all" && (
+                    <button
+                      onClick={() => setSelectedCategory("all")}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Clear Filter
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {/* All Categories Button */}
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                      selectedCategory === "all"
+                        ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-200"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
+                    }`}
+                  >
+                    All Categories ({products.length})
+                  </button>
+                  
+                  {/* Individual Category Buttons */}
+                  {loading ? (
+                    <div className="flex items-center space-x-2 px-4 py-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <span className="text-gray-500">Loading categories...</span>
+                    </div>
+                  ) : (
+                    categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
+                          selectedCategory === category.id
+                            ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-200"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
+                        }`}
+                      >
+                        <span className="text-lg">{category.icon}</span>
+                        <span>{category.name}</span>
+                        <span className="bg-white/20 px-2 py-1 rounded-full text-xs font-bold">
+                          {category.count}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
               {/* Results Count */}
               <div className="mb-6">
-                <p className="text-gray-600">
-                  Showing {filteredProducts.length} of {products.length}{" "}
-                  products
-                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div className="mb-2 sm:mb-0">
+                    <p className="text-gray-600">
+                      Showing {filteredProducts.length} of {products.length} products
+                    </p>
+                    {selectedCategory !== "all" && (
+                      <p className="text-sm text-blue-600 font-medium">
+                        Filtered by: {categories.find(c => c.id === selectedCategory)?.name || selectedCategory}
+                      </p>
+                    )}
+                  </div>
+                  {selectedCategory !== "all" && (
+                    <button
+                      onClick={() => setSelectedCategory("all")}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium bg-blue-50 px-3 py-1 rounded-full hover:bg-blue-100 transition-colors"
+                    >
+                      Clear Filter
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Products Grid */}

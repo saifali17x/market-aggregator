@@ -1,47 +1,40 @@
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
-const compression = require("compression");
-const rateLimit = require("express-rate-limit");
 
 const app = express();
 
-// Security and performance middleware
-app.use(helmet());
-app.use(compression());
+// Enable trust proxy for Vercel
+app.set('trust proxy', 1);
 
-// Rate limiting - be careful with this on Vercel
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 1000 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter);
+// Basic middleware only
+app.use(cors({
+  origin: process.env.NODE_ENV === "production" 
+    ? ["https://seezymart.vercel.app"] 
+    : "*",
+  credentials: true
+}));
 
-// CORS configuration
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? ["https://seezymart.vercel.app"] // Your frontend domain
-        : "*",
-    credentials: true,
-  })
-);
-
-// Body parsing middleware
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json());
 
 // Import routes
 const healthRoutes = require("./routes/health");
 const categoriesRoutes = require("./routes/categories");
+const productsRoutes = require("./routes/products");
+const sellersRoutes = require("./routes/sellers");
+const cartRoutes = require("./routes/cart");
+const profileRoutes = require("./routes/profile");
+const ordersRoutes = require("./routes/orders");
+const checkoutRoutes = require("./routes/checkout");
 
 // Routes
 app.use("/api/health", healthRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/products", productsRoutes);
+app.use("/api/sellers", sellersRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/orders", ordersRoutes);
+app.use("/api/checkout", checkoutRoutes);
 
 // Root route
 app.get("/", (req, res) => {
@@ -54,8 +47,13 @@ app.get("/", (req, res) => {
       detailedHealth: "/api/health/detailed",
       categories: "/api/categories",
       categoriesPopular: "/api/categories/popular",
+      products: "/api/products",
+      productById: "/api/products/:id",
+      sellers: "/api/sellers", 
+      sellerById: "/api/sellers/:id",
+      sellerProducts: "/api/sellers/:id/products"
     },
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -69,8 +67,8 @@ app.get("/api", (req, res) => {
       "GET /api/health/detailed",
       "GET /api/categories",
       "GET /api/categories/popular",
-      "GET /api/categories/:id",
-    ],
+      "GET /api/categories/:id"
+    ]
   });
 });
 
@@ -81,21 +79,19 @@ app.use("*", (req, res) => {
     message: "Route not found",
     path: req.originalUrl,
     method: req.method,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   });
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
   console.error("Global error handler:", err);
-
+  
   res.status(err.status || 500).json({
     success: false,
-    message:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : err.message,
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    message: process.env.NODE_ENV === "production" 
+      ? "Internal server error" 
+      : err.message
   });
 });
 

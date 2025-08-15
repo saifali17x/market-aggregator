@@ -33,14 +33,18 @@ export default function SellerProfilePage() {
     console.log("📋 Router query:", router.query);
     console.log("🆔 ID from router:", id);
     console.log("🆔 ID type:", typeof id);
+    console.log("🔄 Router is ready:", router.isReady);
 
-    if (id) {
-      console.log("✅ ID exists, calling loadSellerData");
+    // Wait for router to be ready and have query parameters
+    if (router.isReady && id) {
+      console.log("✅ Router ready and ID exists, calling loadSellerData");
       loadSellerData();
+    } else if (!router.isReady) {
+      console.log("⏳ Router not ready yet, waiting...");
     } else {
       console.log("❌ No ID found in router query");
     }
-  }, [id, router.query]);
+  }, [id, router.isReady, router.query]);
 
   const loadSellerData = async () => {
     try {
