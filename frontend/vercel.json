@@ -1,0 +1,10 @@
+{
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://backend-jgmh94aqm-saif-alis-projects-02511375.vercel.app/api"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://backend-jgmh94aqm-saif-alis-projects-02511375.vercel.app/api"
+    }
+  }
+}
