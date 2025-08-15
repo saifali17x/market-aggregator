@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-// Mock products data (replace with real database later)
+// Expanded products data with 30+ products across all categories
 const mockProducts = [
-  // TechStore Products
+  // TechStore Products (sellerId: 1) - 7 products
   {
     id: 1,
     title: "iPhone 15 Pro",
@@ -13,13 +13,14 @@ const mockProducts = [
     category: "smartphones",
     sellerId: 1,
     seller: "TechStore",
-    image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=300&fit=crop",
-    description: "Latest iPhone with advanced features",
+    image:
+      "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=300&fit=crop",
+    description: "Latest iPhone with advanced features and titanium design",
     rating: 4.8,
     reviewCount: 245,
     views: 12500,
     stock: 50,
-    brand: "Apple"
+    brand: "Apple",
   },
   {
     id: 2,
@@ -30,30 +31,32 @@ const mockProducts = [
     category: "audio",
     sellerId: 1,
     seller: "TechStore",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
     description: "Industry-leading noise canceling wireless headphones",
     rating: 4.8,
     reviewCount: 189,
     views: 8900,
     stock: 75,
-    brand: "Sony"
+    brand: "Sony",
   },
   {
     id: 3,
-    title: "Samsung 65-inch 4K Smart TV",
-    name: "Samsung 65-inch 4K Smart TV",
-    price: 799.99,
-    originalPrice: 999.99,
-    category: "tv",
+    title: "Samsung Galaxy S24 Ultra",
+    name: "Samsung Galaxy S24 Ultra",
+    price: 1199.99,
+    originalPrice: 1299.99,
+    category: "smartphones",
     sellerId: 1,
     seller: "TechStore",
-    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop",
-    description: "Crystal UHD 4K Smart TV with HDR",
-    rating: 4.6,
-    reviewCount: 156,
-    views: 6750,
-    stock: 20,
-    brand: "Samsung"
+    image:
+      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=300&fit=crop",
+    description: "Flagship Android phone with S Pen and AI features",
+    rating: 4.7,
+    reviewCount: 312,
+    views: 15200,
+    stock: 40,
+    brand: "Samsung",
   },
   {
     id: 4,
@@ -64,69 +67,111 @@ const mockProducts = [
     category: "laptops",
     sellerId: 1,
     seller: "TechStore",
-    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
-    description: "Ultra-portable laptop with stunning display",
+    image:
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
+    description: "Ultra-portable laptop with stunning InfinityEdge display",
     rating: 4.7,
     reviewCount: 203,
     views: 9240,
     stock: 35,
-    brand: "Dell"
+    brand: "Dell",
   },
   {
     id: 5,
-    title: "Gaming Mechanical Keyboard",
-    name: "Gaming Mechanical Keyboard",
+    title: "Gaming Mechanical Keyboard RGB",
+    name: "Gaming Mechanical Keyboard RGB",
     price: 129.99,
     originalPrice: 159.99,
     category: "gaming",
     sellerId: 1,
     seller: "TechStore",
-    image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=300&fit=crop",
-    description: "RGB backlit mechanical gaming keyboard",
+    image:
+      "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=300&fit=crop",
+    description:
+      "RGB backlit mechanical gaming keyboard with Cherry MX switches",
     rating: 4.5,
     reviewCount: 178,
     views: 5420,
     stock: 65,
-    brand: "Razer"
+    brand: "Razer",
   },
-
-  // AppleStore Products
   {
     id: 6,
+    title: "LG 27-inch 4K Monitor",
+    name: "LG 27-inch 4K Monitor",
+    price: 449.99,
+    originalPrice: 549.99,
+    category: "monitors",
+    sellerId: 1,
+    seller: "TechStore",
+    image:
+      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
+    description: "4K UHD IPS monitor with HDR support for professionals",
+    rating: 4.6,
+    reviewCount: 156,
+    views: 6750,
+    stock: 25,
+    brand: "LG",
+  },
+  {
+    id: 7,
+    title: "Wireless Gaming Mouse",
+    name: "Wireless Gaming Mouse",
+    price: 89.99,
+    originalPrice: 119.99,
+    category: "gaming",
+    sellerId: 1,
+    seller: "TechStore",
+    image:
+      "https://images.unsplash.com/photo-1615663235685-4d5ee2ff7b43?w=400&h=300&fit=crop",
+    description: "High-precision wireless gaming mouse with RGB lighting",
+    rating: 4.4,
+    reviewCount: 134,
+    views: 4200,
+    stock: 80,
+    brand: "Logitech",
+  },
+
+  // AppleStore Products (sellerId: 2) - 6 products
+  {
+    id: 8,
     title: "MacBook Air M3",
     name: "MacBook Air M3",
     price: 1299.99,
     originalPrice: 1399.99,
-    category: "laptops", 
+    category: "laptops",
     sellerId: 2,
     seller: "AppleStore",
-    image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop",
-    description: "Powerful laptop for professionals",
+    image:
+      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop",
+    description: "Powerful laptop with M3 chip for professionals and creators",
     rating: 4.9,
     reviewCount: 412,
     views: 15600,
     stock: 25,
-    brand: "Apple"
+    brand: "Apple",
   },
   {
-    id: 7,
-    title: "iPad Pro 12.9-inch",
-    name: "iPad Pro 12.9-inch",
+    id: 9,
+    title: "iPad Pro 12.9-inch M2",
+    name: "iPad Pro 12.9-inch M2",
     price: 1099.99,
     originalPrice: 1199.99,
     category: "tablets",
     sellerId: 2,
     seller: "AppleStore",
-    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop",
-    description: "Professional tablet with M2 chip",
+    image:
+      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop",
+    description:
+      "Professional tablet with M2 chip and Liquid Retina XDR display",
     rating: 4.8,
     reviewCount: 298,
     views: 11200,
     stock: 40,
-    brand: "Apple"
+    brand: "Apple",
   },
   {
-    id: 8,
+    id: 10,
     title: "AirPods Pro (3rd Gen)",
     name: "AirPods Pro (3rd Gen)",
     price: 249.99,
@@ -134,16 +179,18 @@ const mockProducts = [
     category: "audio",
     sellerId: 2,
     seller: "AppleStore",
-    image: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop",
-    description: "Active noise cancellation wireless earbuds",
+    image:
+      "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop",
+    description:
+      "Active noise cancellation wireless earbuds with spatial audio",
     rating: 4.7,
     reviewCount: 567,
     views: 18900,
     stock: 85,
-    brand: "Apple"
+    brand: "Apple",
   },
   {
-    id: 9,
+    id: 11,
     title: "Apple Watch Series 9",
     name: "Apple Watch Series 9",
     price: 399.99,
@@ -151,192 +198,281 @@ const mockProducts = [
     category: "wearables",
     sellerId: 2,
     seller: "AppleStore",
-    image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=300&fit=crop",
-    description: "Advanced fitness and health tracking",
+    image:
+      "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=300&fit=crop",
+    description:
+      "Advanced fitness and health tracking with Always-On Retina display",
     rating: 4.6,
     reviewCount: 324,
     views: 13400,
     stock: 55,
-    brand: "Apple"
+    brand: "Apple",
+  },
+  {
+    id: 12,
+    title: "MacBook Pro 14-inch M3",
+    name: "MacBook Pro 14-inch M3",
+    price: 1999.99,
+    originalPrice: 2199.99,
+    category: "laptops",
+    sellerId: 2,
+    seller: "AppleStore",
+    image:
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
+    description: "Pro laptop with M3 Pro chip for demanding workflows",
+    rating: 4.9,
+    reviewCount: 187,
+    views: 8900,
+    stock: 18,
+    brand: "Apple",
+  },
+  {
+    id: 13,
+    title: "iPhone 14 Pro Max",
+    name: "iPhone 14 Pro Max",
+    price: 899.99,
+    originalPrice: 1099.99,
+    category: "smartphones",
+    sellerId: 2,
+    seller: "AppleStore",
+    image:
+      "https://images.unsplash.com/photo-1678911820864-e2c567c655d7?w=400&h=300&fit=crop",
+    description:
+      "Previous generation iPhone with Dynamic Island and pro cameras",
+    rating: 4.7,
+    reviewCount: 456,
+    views: 16800,
+    stock: 30,
+    brand: "Apple",
   },
 
-  // ShoesWorld Products
+  // ShoesWorld Products (sellerId: 3) - 6 products
   {
-    id: 10,
-    title: "Nike Air Jordan 1",
-    name: "Nike Air Jordan 1",
+    id: 14,
+    title: "Nike Air Jordan 1 Retro High",
+    name: "Nike Air Jordan 1 Retro High",
     price: 179.99,
-    originalPrice: 200.00,
+    originalPrice: 200.0,
     category: "footwear",
     sellerId: 3,
     seller: "ShoesWorld",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop", 
-    description: "Classic basketball shoes",
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
+    description:
+      "Classic basketball shoes with iconic silhouette and premium leather",
     rating: 4.7,
     reviewCount: 445,
     views: 22100,
     stock: 100,
-    brand: "Nike"
+    brand: "Nike",
   },
   {
-    id: 11,
+    id: 15,
     title: "Adidas Ultraboost 22",
     name: "Adidas Ultraboost 22",
     price: 149.99,
-    originalPrice: 180.00,
+    originalPrice: 180.0,
     category: "footwear",
     sellerId: 3,
     seller: "ShoesWorld",
-    image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop",
-    description: "Premium running shoes with boost technology",
+    image:
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop",
+    description: "Premium running shoes with Boost midsole technology",
     rating: 4.7,
     reviewCount: 378,
     views: 16700,
     stock: 85,
-    brand: "Adidas"
+    brand: "Adidas",
   },
   {
-    id: 12,
+    id: 16,
     title: "Converse Chuck Taylor All Star",
     name: "Converse Chuck Taylor All Star",
     price: 59.99,
-    originalPrice: 75.00,
+    originalPrice: 75.0,
     category: "footwear",
     sellerId: 3,
     seller: "ShoesWorld",
-    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop",
-    description: "Classic canvas sneakers",
+    image:
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop",
+    description: "Classic canvas sneakers with timeless design",
     rating: 4.4,
     reviewCount: 289,
     views: 8900,
     stock: 150,
-    brand: "Converse"
+    brand: "Converse",
   },
   {
-    id: 13,
-    title: "Vans Old Skool",
-    name: "Vans Old Skool",
+    id: 17,
+    title: "Vans Old Skool Classic",
+    name: "Vans Old Skool Classic",
     price: 64.99,
-    originalPrice: 80.00,
+    originalPrice: 80.0,
     category: "footwear",
     sellerId: 3,
     seller: "ShoesWorld",
-    image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop",
-    description: "Iconic skate shoes with waffle outsole",
+    image:
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop",
+    description:
+      "Iconic skate shoes with signature side stripe and waffle outsole",
     rating: 4.5,
     reviewCount: 201,
     views: 7800,
     stock: 95,
-    brand: "Vans"
+    brand: "Vans",
   },
   {
-    id: 14,
-    title: "New Balance 990v5",
-    name: "New Balance 990v5",
+    id: 18,
+    title: "New Balance 990v5 Made in USA",
+    name: "New Balance 990v5 Made in USA",
     price: 184.99,
-    originalPrice: 220.00,
+    originalPrice: 220.0,
     category: "footwear",
     sellerId: 3,
     seller: "ShoesWorld",
-    image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop",
-    description: "Premium made in USA running shoes",
+    image:
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop",
+    description: "Premium made in USA running shoes with superior comfort",
     rating: 4.8,
     reviewCount: 156,
     views: 5400,
     stock: 45,
-    brand: "New Balance"
+    brand: "New Balance",
+  },
+  {
+    id: 19,
+    title: "Puma RS-X Reinvention",
+    name: "Puma RS-X Reinvention",
+    price: 119.99,
+    originalPrice: 140.0,
+    category: "footwear",
+    sellerId: 3,
+    seller: "ShoesWorld",
+    image:
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop",
+    description:
+      "Retro-futuristic sneakers with bold colorways and chunky silhouette",
+    rating: 4.3,
+    reviewCount: 167,
+    views: 6200,
+    stock: 70,
+    brand: "Puma",
   },
 
-  // HomeGoods Products
+  // HomeGoods Products (sellerId: 4) - 5 products
   {
-    id: 15,
-    title: "Ninja Coffee Maker",
-    name: "Ninja Coffee Maker",
+    id: 20,
+    title: "Ninja Coffee Maker Pro",
+    name: "Ninja Coffee Maker Pro",
     price: 89.99,
-    originalPrice: 120.00,
+    originalPrice: 120.0,
     category: "appliances",
     sellerId: 4,
     seller: "HomeGoods",
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop",
-    description: "Automatic coffee brewing machine",
+    image:
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop",
+    description: "Automatic coffee brewing machine with multiple brew sizes",
     rating: 4.5,
     reviewCount: 234,
     views: 9800,
     stock: 30,
-    brand: "Ninja"
+    brand: "Ninja",
   },
   {
-    id: 16,
-    title: "KitchenAid Stand Mixer",
-    name: "KitchenAid Stand Mixer",
+    id: 21,
+    title: "KitchenAid Artisan Stand Mixer",
+    name: "KitchenAid Artisan Stand Mixer",
     price: 349.99,
     originalPrice: 429.99,
     category: "appliances",
     sellerId: 4,
     seller: "HomeGoods",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
-    description: "Professional stand mixer for baking",
+    image:
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
+    description: "Professional 5-quart stand mixer for all your baking needs",
     rating: 4.9,
     reviewCount: 189,
     views: 7200,
     stock: 15,
-    brand: "KitchenAid"
+    brand: "KitchenAid",
   },
   {
-    id: 17,
-    title: "Dyson V15 Vacuum Cleaner",
-    name: "Dyson V15 Vacuum Cleaner",
+    id: 22,
+    title: "Dyson V15 Detect Cordless Vacuum",
+    name: "Dyson V15 Detect Cordless Vacuum",
     price: 549.99,
     originalPrice: 649.99,
     category: "cleaning",
     sellerId: 4,
     seller: "HomeGoods",
-    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-    description: "Cordless stick vacuum with laser detection",
+    image:
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+    description: "Cordless stick vacuum with laser dust detection technology",
     rating: 4.7,
     reviewCount: 145,
     views: 6100,
     stock: 25,
-    brand: "Dyson"
+    brand: "Dyson",
   },
   {
-    id: 18,
-    title: "Le Creuset Dutch Oven",
-    name: "Le Creuset Dutch Oven",
+    id: 23,
+    title: "Le Creuset Dutch Oven 5.5qt",
+    name: "Le Creuset Dutch Oven 5.5qt",
     price: 279.99,
-    originalPrice: 350.00,
+    originalPrice: 350.0,
     category: "cookware",
     sellerId: 4,
     seller: "HomeGoods",
-    image: "https://images.unsplash.com/photo-1556909114-54c7b7fd8636?w=400&h=300&fit=crop",
-    description: "Cast iron Dutch oven for slow cooking",
+    image:
+      "https://images.unsplash.com/photo-1556909114-54c7b7fd8636?w=400&h=300&fit=crop",
+    description: "Enameled cast iron Dutch oven for slow cooking and braising",
     rating: 4.8,
     reviewCount: 98,
     views: 4200,
     stock: 20,
-    brand: "Le Creuset"
+    brand: "Le Creuset",
+  },
+  {
+    id: 24,
+    title: "Instant Pot Duo 7-in-1",
+    name: "Instant Pot Duo 7-in-1",
+    price: 99.99,
+    originalPrice: 129.99,
+    category: "appliances",
+    sellerId: 4,
+    seller: "HomeGoods",
+    image:
+      "https://images.unsplash.com/photo-1585515656071-f36df0c11b88?w=400&h=300&fit=crop",
+    description:
+      "Multi-functional electric pressure cooker with 7 appliances in 1",
+    rating: 4.6,
+    reviewCount: 567,
+    views: 12400,
+    stock: 45,
+    brand: "Instant Pot",
   },
 
-  // PhotoPro Products
+  // PhotoPro Products (sellerId: 5) - 6 products
   {
-    id: 19,
-    title: "Canon EOS R6 Camera",
-    name: "Canon EOS R6 Camera",
+    id: 25,
+    title: "Canon EOS R6 Mark II",
+    name: "Canon EOS R6 Mark II",
     price: 2499.99,
     originalPrice: 2699.99,
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop",
-    description: "Professional mirrorless camera with 4K video",
+    image:
+      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop",
+    description: "Professional mirrorless camera with 4K 60p video recording",
     rating: 4.9,
     reviewCount: 87,
     views: 3200,
     stock: 15,
-    brand: "Canon"
+    brand: "Canon",
   },
   {
-    id: 20,
+    id: 26,
     title: "Sony Alpha A7 IV",
     name: "Sony Alpha A7 IV",
     price: 2299.99,
@@ -344,128 +480,136 @@ const mockProducts = [
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&h=300&fit=crop",
-    description: "Full-frame mirrorless camera with 33MP sensor",
+    image:
+      "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&h=300&fit=crop",
+    description:
+      "Full-frame mirrorless camera with 33MP sensor and real-time tracking",
     rating: 4.8,
     reviewCount: 76,
     views: 2800,
     stock: 12,
-    brand: "Sony"
+    brand: "Sony",
   },
   {
-    id: 21,
-    title: "Nikon D850 DSLR",
-    name: "Nikon D850 DSLR",
-    price: 1999.99,
-    originalPrice: 2299.99,
+    id: 27,
+    title: "Nikon Z9 Professional",
+    name: "Nikon Z9 Professional",
+    price: 4999.99,
+    originalPrice: 5499.99,
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1606983287719-04cb5d22006c?w=400&h=300&fit=crop",
-    description: "Professional DSLR with 45.7MP sensor",
+    image:
+      "https://images.unsplash.com/photo-1606983287719-04cb5d22006c?w=400&h=300&fit=crop",
+    description: "Flagship mirrorless camera with 45.7MP sensor and 8K video",
     rating: 4.7,
     reviewCount: 54,
     views: 2100,
     stock: 8,
-    brand: "Nikon"
+    brand: "Nikon",
   },
   {
-    id: 22,
-    title: "Canon 70-200mm f/2.8L Lens",
-    name: "Canon 70-200mm f/2.8L Lens",
+    id: 28,
+    title: "Canon RF 70-200mm f/2.8L IS USM",
+    name: "Canon RF 70-200mm f/2.8L IS USM",
     price: 1899.99,
     originalPrice: 2099.99,
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1606983340200-7990c7cddc7b?w=400&h=300&fit=crop",
-    description: "Professional telephoto zoom lens",
+    image:
+      "https://images.unsplash.com/photo-1606983340200-7990c7cddc7b?w=400&h=300&fit=crop",
+    description: "Professional telephoto zoom lens with Image Stabilization",
     rating: 4.9,
     reviewCount: 43,
     views: 1800,
     stock: 6,
-    brand: "Canon"
+    brand: "Canon",
   },
   {
-    id: 23,
-    title: "Manfrotto Carbon Fiber Tripod",
-    name: "Manfrotto Carbon Fiber Tripod",
+    id: 29,
+    title: "Manfrotto MT190XPRO4 Tripod",
+    name: "Manfrotto MT190XPRO4 Tripod",
     price: 399.99,
     originalPrice: 499.99,
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1606983287851-4c74e2a6dd2b?w=400&h=300&fit=crop",
-    description: "Lightweight carbon fiber tripod for professionals",
+    image:
+      "https://images.unsplash.com/photo-1606983287851-4c74e2a6dd2b?w=400&h=300&fit=crop",
+    description: "Professional aluminum tripod with 90° column mechanism",
     rating: 4.6,
     reviewCount: 67,
     views: 2400,
     stock: 18,
-    brand: "Manfrotto"
+    brand: "Manfrotto",
   },
   {
-    id: 24,
-    title: "Godox AD600Pro Flash",
-    name: "Godox AD600Pro Flash",
+    id: 30,
+    title: "Godox AD600Pro Studio Flash",
+    name: "Godox AD600Pro Studio Flash",
     price: 849.99,
     originalPrice: 999.99,
     category: "cameras",
     sellerId: 5,
     seller: "PhotoPro",
-    image: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&h=300&fit=crop",
-    description: "Professional studio flash with TTL",
+    image:
+      "https://images.unsplash.com/photo-1551439602-a3cfd7ee0334?w=400&h=300&fit=crop",
+    description: "Professional portable studio flash with TTL and HSS",
     rating: 4.7,
     reviewCount: 29,
     views: 1200,
     stock: 10,
-    brand: "Godox"
-  }
+    brand: "Godox",
+  },
 ];
 
 // Get all products with optional filtering
 router.get("/", (req, res) => {
   try {
     let products = [...mockProducts];
-    
-    // Apply filters if provided
+
     const { category, seller, minPrice, maxPrice, search } = req.query;
-    
+
     if (category) {
-      products = products.filter(p => p.category === category);
+      products = products.filter((p) => p.category === category);
     }
-    
+
     if (seller) {
-      products = products.filter(p => p.seller.toLowerCase().includes(seller.toLowerCase()));
-    }
-    
-    if (minPrice) {
-      products = products.filter(p => p.price >= parseFloat(minPrice));
-    }
-    
-    if (maxPrice) {
-      products = products.filter(p => p.price <= parseFloat(maxPrice));
-    }
-    
-    if (search) {
-      products = products.filter(p => 
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.description.toLowerCase().includes(search.toLowerCase())
+      products = products.filter((p) =>
+        p.seller.toLowerCase().includes(seller.toLowerCase())
       );
     }
-    
+
+    if (minPrice) {
+      products = products.filter((p) => p.price >= parseFloat(minPrice));
+    }
+
+    if (maxPrice) {
+      products = products.filter((p) => p.price <= parseFloat(maxPrice));
+    }
+
+    if (search) {
+      products = products.filter(
+        (p) =>
+          p.title.toLowerCase().includes(search.toLowerCase()) ||
+          p.name.toLowerCase().includes(search.toLowerCase()) ||
+          p.description.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
     res.json({
       success: true,
       data: products,
       total: products.length,
-      message: "Products retrieved successfully"
+      message: "Products retrieved successfully",
     });
   } catch (error) {
     console.error("Error in products route:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch products",
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -474,27 +618,27 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   try {
     const productId = parseInt(req.params.id);
-    const product = mockProducts.find(p => p.id === productId);
-    
+    const product = mockProducts.find((p) => p.id === productId);
+
     if (!product) {
       return res.status(404).json({
         success: false,
         error: "Product not found",
-        message: `Product with ID ${productId} does not exist`
+        message: `Product with ID ${productId} does not exist`,
       });
     }
-    
+
     res.json({
       success: true,
       data: product,
-      message: "Product retrieved successfully"
+      message: "Product retrieved successfully",
     });
   } catch (error) {
     console.error("Error in product by ID route:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch product",
-      message: error.message
+      message: error.message,
     });
   }
 });

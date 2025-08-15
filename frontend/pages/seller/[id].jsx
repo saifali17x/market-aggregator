@@ -62,7 +62,6 @@ export default function SellerProfilePage() {
       } else {
         console.error("❌ Failed to load seller:", sellerResponse.error);
         console.error("❌ Full response:", sellerResponse);
-        // Don't return here, continue to try loading products
       }
 
       // Load seller products
@@ -87,6 +86,21 @@ export default function SellerProfilePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Utility function for safe number formatting
+  const safeToLocaleString = (value, fallback = "0") => {
+    if (value === null || value === undefined) return fallback;
+    if (typeof value === "number" && !isNaN(value)) {
+      return value.toLocaleString();
+    }
+    if (typeof value === "string") {
+      const parsed = parseFloat(value);
+      if (!isNaN(parsed)) {
+        return parsed.toLocaleString();
+      }
+    }
+    return fallback;
   };
 
   if (loading) {
@@ -163,11 +177,11 @@ export default function SellerProfilePage() {
         </div>
 
         <div className="container mx-auto px-4 -mt-16">
-          {/* Seller Info Card */}
+          {/* Seller Info Card - FIXED LAYOUT */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Basic Info */}
-              <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Basic Info - FIXED WIDTH */}
+              <div className="lg:col-span-2">
                 <div className="flex items-center space-x-3 mb-4">
                   <h2 className="text-xl font-semibold text-gray-900">
                     {seller.name}
@@ -194,45 +208,41 @@ export default function SellerProfilePage() {
                   </div>
                   <div className="flex items-center">
                     <Package className="w-4 h-4 mr-1" />
-                    {seller.totalProducts} products
+                    {seller.products || seller.totalProducts} products
                   </div>
                 </div>
               </div>
 
-              {/* Stats - Fixed layout to prevent cutoff */}
-              <div className="lg:col-span-1 space-y-4">
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="text-xl font-bold text-blue-600">
-                    {seller.rating}
+              {/* Stats - FIXED LAYOUT TO PREVENT CUTOFF */}
+              <div className="lg:col-span-1">
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {seller.rating}
+                    </div>
+                    <div className="flex items-center justify-center mb-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(seller.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {safeToLocaleString(seller.reviewCount)} reviews
+                    </div>
                   </div>
-                  <div className="flex items-center justify-center mb-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-3 h-3 ${
-                          i < Math.floor(seller.rating)
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {seller.reviewCount &&
-                    typeof seller.reviewCount === "number"
-                      ? seller.reviewCount.toLocaleString()
-                      : "0"}{" "}
-                    reviews
-                  </div>
-                </div>
 
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="text-xl font-bold text-green-600">
-                    {seller.totalSales && typeof seller.totalSales === "number"
-                      ? seller.totalSales.toLocaleString()
-                      : "0"}
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {safeToLocaleString(seller.totalSales)}
+                    </div>
+                    <div className="text-sm text-gray-600">Total Sales</div>
                   </div>
-                  <div className="text-xs text-gray-600">Total Sales</div>
                 </div>
               </div>
             </div>
@@ -269,81 +279,96 @@ export default function SellerProfilePage() {
             <div className="p-6">
               {activeTab === "products" && (
                 <div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {products.map((product) => (
-                      <div
-                        key={product.id}
-                        className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow overflow-hidden"
-                      >
-                        {product.image ? (
-                          <img
-                            src={product.image}
-                            alt={product.title}
-                            className="h-48 w-full object-cover"
-                          />
-                        ) : (
-                          <div className="bg-gray-200 h-48 w-full flex items-center justify-center text-gray-500">
-                            No Image
-                          </div>
-                        )}
-                        <div className="p-4">
-                          <div className="flex items-center mb-2">
-                            <div className="flex items-center">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-4 h-4 ${
-                                    i < Math.floor(product.rating)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
+                  {products.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No products found
+                      </h3>
+                      <p className="text-gray-600">
+                        This seller hasn't added any products yet.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {products.map((product) => (
+                        <div
+                          key={product.id}
+                          className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow overflow-hidden"
+                        >
+                          {product.image ? (
+                            <img
+                              src={product.image}
+                              alt={product.title || product.name || "Product"}
+                              className="h-48 w-full object-cover"
+                              onError={(e) => {
+                                e.target.src = "/placeholder-product.jpg";
+                              }}
+                            />
+                          ) : (
+                            <div className="bg-gray-200 h-48 w-full flex items-center justify-center text-gray-500">
+                              No Image
                             </div>
-                            <span className="text-sm text-gray-600 ml-2">
-                              ({product.reviewCount})
-                            </span>
-                          </div>
-
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {product.title}
-                          </h3>
-
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg font-bold text-gray-900">
-                                ${product.price}
+                          )}
+                          <div className="p-4">
+                            <div className="flex items-center mb-2">
+                              <div className="flex items-center">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`w-4 h-4 ${
+                                      i < Math.floor(product.rating || 0)
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-300"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-600 ml-2">
+                                ({safeToLocaleString(product.reviewCount)})
                               </span>
-                              {product.originalPrice > product.price && (
-                                <span className="text-sm text-gray-500 line-through">
-                                  ${product.originalPrice}
-                                </span>
-                              )}
                             </div>
-                            <div className="text-sm text-gray-500">
-                              <Eye className="w-4 h-4 inline mr-1" />
-                              {product.views
-                                ? product.views.toLocaleString()
-                                : "0"}
-                            </div>
-                          </div>
 
-                          <div className="flex space-x-2">
-                            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
-                              <ShoppingCart className="w-4 h-4 mr-2" />
-                              Add to Cart
-                            </button>
-                            <Link
-                              href={`/product/${product.id}`}
-                              className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
-                            >
-                              View
-                            </Link>
+                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                              {product.title ||
+                                product.name ||
+                                "Untitled Product"}
+                            </h3>
+
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg font-bold text-gray-900">
+                                  ${product.price}
+                                </span>
+                                {product.originalPrice > product.price && (
+                                  <span className="text-sm text-gray-500 line-through">
+                                    ${product.originalPrice}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                <Eye className="w-4 h-4 inline mr-1" />
+                                {safeToLocaleString(product.views)}
+                              </div>
+                            </div>
+
+                            <div className="flex space-x-2">
+                              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
+                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                Add to Cart
+                              </button>
+                              <Link
+                                href={`/product/${product.id}`}
+                                className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
+                              >
+                                View
+                              </Link>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -387,23 +412,29 @@ export default function SellerProfilePage() {
                       Contact Information
                     </h3>
                     <div className="space-y-2 text-sm text-gray-700">
-                      <div className="flex items-center">
-                        <Globe className="w-4 h-4 mr-2 text-blue-600" />
-                        <a
-                          href={seller.website}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {seller.website}
-                        </a>
-                      </div>
-                      <div className="flex items-center">
-                        <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                        {seller.email}
-                      </div>
-                      <div className="flex items-center">
-                        <Phone className="w-4 h-4 mr-2 text-blue-600" />
-                        {seller.phone}
-                      </div>
+                      {seller.website && (
+                        <div className="flex items-center">
+                          <Globe className="w-4 h-4 mr-2 text-blue-600" />
+                          <a
+                            href={seller.website}
+                            className="text-blue-600 hover:underline"
+                          >
+                            {seller.website}
+                          </a>
+                        </div>
+                      )}
+                      {seller.email && (
+                        <div className="flex items-center">
+                          <Mail className="w-4 h-4 mr-2 text-blue-600" />
+                          {seller.email}
+                        </div>
+                      )}
+                      {seller.phone && (
+                        <div className="flex items-center">
+                          <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                          {seller.phone}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -459,9 +490,9 @@ export default function SellerProfilePage() {
                     <div className="text-center p-4 bg-blue-50 rounded-lg">
                       <Eye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-blue-600">
-                        {(
+                        {safeToLocaleString(
                           seller.analytics?.monthlyViews || 12500
-                        ).toLocaleString()}
+                        )}
                       </div>
                       <div className="text-sm text-gray-600">Monthly Views</div>
                     </div>
