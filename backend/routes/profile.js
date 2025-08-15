@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateToken } = require("../middleware/auth");
+const { authenticateToken, optionalAuth } = require("../middleware/auth");
 
 // GET /api/profile - Get user profile
-router.get("/", authenticateToken, async (req, res) => {
+router.get("/", optionalAuth, async (req, res) => {
   try {
     // For now, return mock data - you can integrate with your user database later
     const profile = {
-      id: req.user.id || 1,
+      id: req.user?.id || 1,
       name: "John Doe",
       email: "john@example.com",
       avatar:
@@ -42,7 +42,7 @@ router.get("/", authenticateToken, async (req, res) => {
 });
 
 // PUT /api/profile - Update user profile
-router.put("/", authenticateToken, async (req, res) => {
+router.put("/", optionalAuth, async (req, res) => {
   try {
     const { name, email, phone, address, preferences } = req.body;
 
@@ -51,7 +51,7 @@ router.put("/", authenticateToken, async (req, res) => {
       success: true,
       message: "Profile updated successfully",
       data: {
-        id: req.user.id || 1,
+        id: req.user?.id || 1,
         name: name || "John Doe",
         email: email || "john@example.com",
         phone: phone || "+1 (555) 123-4567",

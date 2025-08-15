@@ -19,16 +19,21 @@ export default function Profile() {
   const loadProfile = async () => {
     try {
       setLoading(true);
+      console.log("🔗 Loading profile from backend...");
       const response = await apiService.getProfile();
+      console.log("📊 Profile response:", response);
+      
       if (response.success && response.data) {
         setProfile(response.data);
         setFormData(response.data);
+        setError(null);
       } else {
+        console.error("❌ Profile API returned error:", response);
         setError("Failed to load profile");
       }
     } catch (err) {
-      setError("Failed to load profile");
-      console.error("Error loading profile:", err);
+      console.error("❌ Error loading profile:", err);
+      setError(`Failed to load profile: ${err.message}`);
     } finally {
       setLoading(false);
     }
