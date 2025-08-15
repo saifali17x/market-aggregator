@@ -165,9 +165,9 @@ export default function SellerProfilePage() {
         <div className="container mx-auto px-4 -mt-16">
           {/* Seller Info Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Basic Info */}
-              <div className="xl:col-span-2">
+              <div className="lg:col-span-3">
                 <div className="flex items-center space-x-3 mb-4">
                   <h2 className="text-xl font-semibold text-gray-900">
                     {seller.name}
@@ -200,16 +200,16 @@ export default function SellerProfilePage() {
               </div>
 
               {/* Stats - Fixed layout to prevent cutoff */}
-              <div className="xl:col-span-1 space-y-4 min-w-0">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">
+              <div className="lg:col-span-1 space-y-4">
+                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                  <div className="text-xl font-bold text-blue-600">
                     {seller.rating}
                   </div>
                   <div className="flex items-center justify-center mb-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${
+                        className={`w-3 h-3 ${
                           i < Math.floor(seller.rating)
                             ? "text-yellow-400 fill-current"
                             : "text-gray-300"
@@ -217,7 +217,7 @@ export default function SellerProfilePage() {
                       />
                     ))}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs text-gray-600">
                     {seller.reviewCount &&
                     typeof seller.reviewCount === "number"
                       ? seller.reviewCount.toLocaleString()
@@ -226,13 +226,13 @@ export default function SellerProfilePage() {
                   </div>
                 </div>
 
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+                <div className="text-center p-3 bg-green-50 rounded-lg">
+                  <div className="text-xl font-bold text-green-600">
                     {seller.totalSales && typeof seller.totalSales === "number"
                       ? seller.totalSales.toLocaleString()
                       : "0"}
                   </div>
-                  <div className="text-sm text-gray-600">Total Sales</div>
+                  <div className="text-xs text-gray-600">Total Sales</div>
                 </div>
               </div>
             </div>
