@@ -28,18 +28,18 @@ export default function HomePage() {
   const loadStats = async () => {
     try {
       console.log("🔗 Loading stats from backend...");
-      
+
       // Fetch products and sellers from API
       const [productsResponse, sellersResponse] = await Promise.all([
         apiService.getProducts(),
-        apiService.getSellers()
+        apiService.getSellers(),
       ]);
 
       const totalProducts = productsResponse?.data?.length || 0;
       const activeSellers = sellersResponse?.data?.length || 0;
-      
+
       console.log("📊 Stats loaded:", { totalProducts, activeSellers });
-      
+
       setStats({
         totalProducts,
         activeSellers,
@@ -51,7 +51,7 @@ export default function HomePage() {
       // Fallback to mock data for portfolio demo
       setStats({
         totalProducts: 8, // Your current backend count
-        activeSellers: 5,  // Your current backend count
+        activeSellers: 5, // Your current backend count
         totalSales: 10000,
         happyCustomers: 1496,
       });
