@@ -218,13 +218,19 @@ export default function SellerProfilePage() {
                     ))}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {seller.reviewCount} reviews
+                    {seller.reviewCount &&
+                    typeof seller.reviewCount === "number"
+                      ? seller.reviewCount.toLocaleString()
+                      : "0"}{" "}
+                    reviews
                   </div>
                 </div>
 
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <div className="text-2xl font-bold text-green-600">
-                    {seller.totalSales.toLocaleString()}
+                    {seller.totalSales && typeof seller.totalSales === "number"
+                      ? seller.totalSales.toLocaleString()
+                      : "0"}
                   </div>
                   <div className="text-sm text-gray-600">Total Sales</div>
                 </div>

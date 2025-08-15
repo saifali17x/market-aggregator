@@ -157,9 +157,10 @@ export default function SellersPage() {
                         </div>
                         <span className="text-sm text-gray-600 ml-2">
                           {seller.rating || 0} (
-                          {seller.reviewCount
+                          {seller.reviewCount &&
+                          typeof seller.reviewCount === "number"
                             ? seller.reviewCount.toLocaleString()
-                            : 0}
+                            : "0"}
                           )
                         </span>
                       </div>
@@ -169,11 +170,12 @@ export default function SellersPage() {
                             Member since {seller.memberSince}
                           </div>
                         )}
-                        {seller.totalSales && (
-                          <div className="text-blue-600 font-semibold">
-                            {seller.totalSales.toLocaleString()} sales
-                          </div>
-                        )}
+                        {seller.totalSales &&
+                          typeof seller.totalSales === "number" && (
+                            <div className="text-blue-600 font-semibold">
+                              {seller.totalSales.toLocaleString()} sales
+                            </div>
+                          )}
                       </div>
                     </div>
 

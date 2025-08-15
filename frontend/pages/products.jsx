@@ -470,7 +470,9 @@ export default function ProductsPage() {
               {/* Mobile Category List (visible on small screens) */}
               <div className="mb-6 lg:hidden">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Categories
+                  </h3>
                   {selectedCategory !== "all" && (
                     <button
                       onClick={() => setSelectedCategory("all")}
@@ -492,7 +494,7 @@ export default function ProductsPage() {
                   >
                     All ({products.length})
                   </button>
-                  
+
                   {/* Individual Category Buttons */}
                   {loading ? (
                     <div className="flex items-center space-x-2 px-3 py-2">
@@ -524,7 +526,9 @@ export default function ProductsPage() {
               {/* Desktop Category List (visible on larger screens) */}
               <div className="mb-6 hidden lg:block">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Categories
+                  </h3>
                   {selectedCategory !== "all" && (
                     <button
                       onClick={() => setSelectedCategory("all")}
@@ -546,12 +550,14 @@ export default function ProductsPage() {
                   >
                     All Categories ({products.length})
                   </button>
-                  
+
                   {/* Individual Category Buttons */}
                   {loading ? (
                     <div className="flex items-center space-x-2 px-4 py-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                      <span className="text-gray-500">Loading categories...</span>
+                      <span className="text-gray-500">
+                        Loading categories...
+                      </span>
                     </div>
                   ) : (
                     categories.map((category) => (
@@ -580,11 +586,14 @@ export default function ProductsPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div className="mb-2 sm:mb-0">
                     <p className="text-gray-600">
-                      Showing {filteredProducts.length} of {products.length} products
+                      Showing {filteredProducts.length} of {products.length}{" "}
+                      products
                     </p>
                     {selectedCategory !== "all" && (
                       <p className="text-sm text-blue-600 font-medium">
-                        Filtered by: {categories.find(c => c.id === selectedCategory)?.name || selectedCategory}
+                        Filtered by:{" "}
+                        {categories.find((c) => c.id === selectedCategory)
+                          ?.name || selectedCategory}
                       </p>
                     )}
                   </div>
@@ -608,9 +617,24 @@ export default function ProductsPage() {
                   >
                     <div className="relative">
                       <img
-                        src={product.image}
-                        alt={product.title}
+                        src={
+                          product.image ||
+                          product.imageUrl ||
+                          product.thumbnail ||
+                          product.originalImage ||
+                          "/placeholder-product.jpg"
+                        }
+                        alt={
+                          product.title ||
+                          product.name ||
+                          product.productName ||
+                          "Product"
+                        }
                         className="w-full h-48 object-cover"
+                        onError={(e) => {
+                          e.target.src =
+                            product.originalImage || "/placeholder-product.jpg";
+                        }}
                       />
                       <button
                         onClick={() => toggleWishlist(product.id)}
@@ -659,7 +683,10 @@ export default function ProductsPage() {
                       </div>
 
                       <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                        {product.title}
+                        {product.title ||
+                          product.name ||
+                          product.productName ||
+                          "Untitled Product"}
                       </h3>
 
                       <div className="flex items-center justify-between mb-4">
@@ -675,7 +702,9 @@ export default function ProductsPage() {
                         </div>
                         <div className="text-sm text-gray-500">
                           <Eye className="w-4 h-4 inline mr-1" />
-                          {product.views ? product.views.toLocaleString() : "0"}
+                          {product.views && typeof product.views === "number"
+                            ? product.views.toLocaleString()
+                            : "0"}
                         </div>
                       </div>
 
