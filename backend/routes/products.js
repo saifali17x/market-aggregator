@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { Product, Seller, Category, Listing, sequelize } = require("../models");
 
 // Expanded products data with 30+ products across all categories
 const mockProducts = [
@@ -565,9 +566,64 @@ const mockProducts = [
 ];
 
 // Get all products with optional filtering
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    let products = [...mockProducts];
+    let products = [];
+
+    // Try to get products from database first, safely fallback to mock data
+    try {
+      // Check if database models are available
+      if (Listing && Seller && sequelize) {
+        const dbListings = await Listing.findAll({
+          include: [
+            {
+              model: Seller,
+              as: "seller",
+              attributes: ["name"],
+              required: false,
+            },
+          ],
+          where: {
+            availabilityStatus: "available",
+          },
+          limit: 100, // Prevent overwhelming responses
+        });
+
+        if (dbListings && dbListings.length > 0) {
+          console.log(`✅ Loaded ${dbListings.length} products from database`);
+          products = dbListings.map((listing) => ({
+            id: listing.id,
+            title: listing.title,
+            name: listing.title,
+            price: parseFloat(listing.price) || 0,
+            originalPrice:
+              parseFloat(listing.originalPrice) ||
+              parseFloat(listing.price) ||
+              0,
+            category: "uncategorized", // Simplified for now
+            seller: listing.seller?.name || "Unknown Seller",
+            sellerId: listing.sellerId,
+            image: Array.isArray(listing.images) ? listing.images[0] : "",
+            description: listing.description || "",
+            rating: 4.5,
+            reviewCount: 0,
+            views: listing.viewsCount || 0,
+            stock: 10,
+            brand: "",
+          }));
+        } else {
+          throw new Error("No listings found in database");
+        }
+      } else {
+        throw new Error("Database models not available");
+      }
+    } catch (dbError) {
+      console.log(
+        "⚠️ Database query failed, using mock data:",
+        dbError.message
+      );
+      products = [...mockProducts];
+    }
 
     const { category, seller, minPrice, maxPrice, search } = req.query;
 
