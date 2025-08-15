@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
+import Layout from "../../components/Layout";
 import {
   User,
   Mail,
@@ -235,7 +237,12 @@ export default function SellerOnboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <Layout>
+      <Head>
+        <title>Become a Seller - SeezyMart</title>
+        <meta name="description" content="Join our marketplace as a seller and start your business journey" />
+      </Head>
+      <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
@@ -738,6 +745,7 @@ export default function SellerOnboard() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }

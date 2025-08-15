@@ -129,7 +129,11 @@ export default function Checkout() {
 
       if (response.success) {
         // Redirect to order confirmation page
-        router.push(`/order-confirmation?orderId=${response.data.orderId || 'ORD-2024-001'}`);
+        router.push(
+          `/order-confirmation?orderId=${
+            response.data.orderId || "ORD-2024-001"
+          }`
+        );
       } else {
         setError(response.error || "Checkout failed");
       }

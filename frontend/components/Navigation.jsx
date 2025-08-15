@@ -21,7 +21,7 @@ export default function Navigation() {
   useEffect(() => {
     const loadCartCount = async () => {
       try {
-        const response = await fetch("/api/cart");
+        const response = await fetch("http://localhost:3001/api/cart");
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.data) {
@@ -34,19 +34,30 @@ export default function Navigation() {
     };
 
     loadCartCount();
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = () => {
+      loadCartCount();
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
   }, []);
 
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isUserMenuOpen && !event.target.closest('.user-menu')) {
+      if (isUserMenuOpen && !event.target.closest(".user-menu")) {
         setIsUserMenuOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isUserMenuOpen]);
 
@@ -142,7 +153,7 @@ export default function Navigation() {
               >
                 <User className="w-6 h-6" />
               </button>
-              
+
               {/* User Menu Dropdown */}
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">

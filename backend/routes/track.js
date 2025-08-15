@@ -56,15 +56,17 @@ router.post("/click", clickRateLimit, async (req, res) => {
     }
 
     // Extract IP address
-    const ipAddress = req.ip || 
-                     req.connection.remoteAddress || 
-                     req.headers["x-forwarded-for"]?.split(",")[0] || 
-                     "unknown";
+    const ipAddress =
+      req.ip ||
+      req.connection.remoteAddress ||
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      "unknown";
 
     // Hash IP address for privacy (optional)
-    const hashedIp = process.env.HASH_IPS === "true" 
-      ? require("crypto").createHash("sha256").update(ipAddress).digest("hex")
-      : ipAddress;
+    const hashedIp =
+      process.env.HASH_IPS === "true"
+        ? require("crypto").createHash("sha256").update(ipAddress).digest("hex")
+        : ipAddress;
 
     // Create click log entry
     const clickLog = await ClickLog.create({
@@ -83,14 +85,18 @@ router.post("/click", clickRateLimit, async (req, res) => {
           "x-real-ip": req.headers["x-real-ip"],
           "cf-connecting-ip": req.headers["cf-connecting-ip"],
         },
-        geoip: req.headers["cf-ipcountry"] ? {
-          country: req.headers["cf-ipcountry"],
-        } : null,
+        geoip: req.headers["cf-ipcountry"]
+          ? {
+              country: req.headers["cf-ipcountry"],
+            }
+          : null,
       },
     });
 
     // Log successful click tracking
-    console.log(`Click tracked: ${url} from IP ${hashedIp} at ${new Date().toISOString()}`);
+    console.log(
+      `Click tracked: ${url} from IP ${hashedIp} at ${new Date().toISOString()}`
+    );
 
     res.json({
       success: true,
@@ -100,7 +106,6 @@ router.post("/click", clickRateLimit, async (req, res) => {
         message: "Click tracked successfully",
       },
     });
-
   } catch (error) {
     console.error("Click tracking error:", error);
     res.status(500).json({
@@ -117,8 +122,10 @@ router.post("/click", clickRateLimit, async (req, res) => {
  */
 router.post("/track-click", clickRateLimit, async (req, res) => {
   // Log deprecation warning
-  console.warn("Legacy endpoint /api/track-click used. Please update to /api/track/click");
-  
+  console.warn(
+    "Legacy endpoint /api/track-click used. Please update to /api/track/click"
+  );
+
   // Forward the request to the new endpoint
   req.url = "/api/track/click";
   return router.handle(req, res);
@@ -135,7 +142,9 @@ router.get("/click/stats", async (req, res) => {
     const todayClicks = await ClickLog.count({
       where: {
         createdAt: {
-          [require("sequelize").Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)),
+          [require("sequelize").Op.gte]: new Date(
+            new Date().setHours(0, 0, 0, 0)
+          ),
         },
       },
     });
@@ -144,10 +153,18 @@ router.get("/click/stats", async (req, res) => {
     const topUrls = await ClickLog.findAll({
       attributes: [
         "url",
-        [require("sequelize").fn("COUNT", require("sequelize").col("id")), "clickCount"],
+        [
+          require("sequelize").fn("COUNT", require("sequelize").col("id")),
+          "clickCount",
+        ],
       ],
       group: ["url"],
-      order: [[require("sequelize").fn("COUNT", require("sequelize").col("id")), "DESC"]],
+      order: [
+        [
+          require("sequelize").fn("COUNT", require("sequelize").col("id")),
+          "DESC",
+        ],
+      ],
       limit: 10,
     });
 
@@ -155,10 +172,18 @@ router.get("/click/stats", async (req, res) => {
     const clicksBySource = await ClickLog.findAll({
       attributes: [
         "source",
-        [require("sequelize").fn("COUNT", require("sequelize").col("id")), "clickCount"],
+        [
+          require("sequelize").fn("COUNT", require("sequelize").col("id")),
+          "clickCount",
+        ],
       ],
       group: ["source"],
-      order: [[require("sequelize").fn("COUNT", require("sequelize").col("id")), "DESC"]],
+      order: [
+        [
+          require("sequelize").fn("COUNT", require("sequelize").col("id")),
+          "DESC",
+        ],
+      ],
     });
 
     res.json({
@@ -166,17 +191,16 @@ router.get("/click/stats", async (req, res) => {
       data: {
         totalClicks,
         todayClicks,
-        topUrls: topUrls.map(item => ({
+        topUrls: topUrls.map((item) => ({
           url: item.url,
           clickCount: parseInt(item.dataValues.clickCount),
         })),
-        clicksBySource: clicksBySource.map(item => ({
+        clicksBySource: clicksBySource.map((item) => ({
           source: item.source,
           clickCount: parseInt(item.dataValues.clickCount),
         })),
       },
     });
-
   } catch (error) {
     console.error("Click stats error:", error);
     res.status(500).json({
@@ -222,7 +246,6 @@ router.get("/click/listing/:id", async (req, res) => {
         recentClicks: clicks,
       },
     });
-
   } catch (error) {
     console.error("Listing click stats error:", error);
     res.status(500).json({

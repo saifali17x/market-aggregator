@@ -51,19 +51,25 @@ const config = {
 const env = process.env.NODE_ENV || "development";
 const dbConfig = config[env];
 
-// Create Sequelize instance
+// Create Sequelize instance - ORIGINAL SETUP: RUNNING WITHOUT DATABASE
 let sequelize = null;
 
 try {
-  if (dbConfig.use_env_variable && process.env[dbConfig.use_env_variable]) {
-    sequelize = new Sequelize(process.env[dbConfig.use_env_variable], dbConfig);
-  } else if (process.env.DATABASE_URL) {
-    sequelize = new Sequelize(process.env.DATABASE_URL, dbConfig);
+  // Check if we want to use database (optional)
+  if (process.env.USE_DATABASE === "true" && process.env.DATABASE_URL) {
+    console.log("🗄️ Using database connection");
+    if (dbConfig.use_env_variable && process.env[dbConfig.use_env_variable]) {
+      sequelize = new Sequelize(process.env[dbConfig.use_env_variable], dbConfig);
+    } else if (process.env.DATABASE_URL) {
+      sequelize = new Sequelize(process.env.DATABASE_URL, dbConfig);
+    }
   } else {
-    console.log("No database URL found, running without database");
+    console.log("📝 Running without database (using in-memory data)");
+    sequelize = null;
   }
 } catch (error) {
   console.log("Failed to initialize database connection:", error.message);
+  console.log("📝 Falling back to in-memory data");
   sequelize = null;
 }
 

@@ -157,10 +157,9 @@ export default function SellersPage() {
                         </div>
                         <span className="text-sm text-gray-600 ml-2">
                           {seller.rating || 0} (
-                          {seller.reviewCount &&
-                          typeof seller.reviewCount === "number"
+                          {seller.reviewCount
                             ? seller.reviewCount.toLocaleString()
-                            : "0"}
+                            : 0}
                           )
                         </span>
                       </div>
@@ -170,12 +169,11 @@ export default function SellersPage() {
                             Member since {seller.memberSince}
                           </div>
                         )}
-                        {seller.totalSales &&
-                          typeof seller.totalSales === "number" && (
-                            <div className="text-blue-600 font-semibold">
-                              {seller.totalSales.toLocaleString()} sales
-                            </div>
-                          )}
+                        {seller.totalSales && (
+                          <div className="text-blue-600 font-semibold">
+                            {seller.totalSales.toLocaleString()} sales
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -295,7 +293,7 @@ export default function SellersPage() {
             </p>
             <div className="space-x-4">
               <Link
-                href="/seller/register"
+                href="/seller/onboard"
                 className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
               >
                 Start Selling Today

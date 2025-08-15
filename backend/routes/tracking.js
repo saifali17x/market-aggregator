@@ -172,8 +172,10 @@ router.post(
 // POST /api/track-click (Legacy endpoint for backward compatibility)
 router.post("/track-click", clickRateLimit, async (req, res) => {
   // Log deprecation warning
-  console.warn("Legacy endpoint /api/track-click used. Please update to /api/track/click");
-  
+  console.warn(
+    "Legacy endpoint /api/track-click used. Please update to /api/track/click"
+  );
+
   // Forward the request to the new endpoint
   req.url = "/api/track/click";
   return router.handle(req, res);

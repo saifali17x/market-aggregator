@@ -10,7 +10,6 @@ import {
   Users,
   Package,
 } from "lucide-react";
-import { apiService } from "../services/api";
 
 export default function HomePage() {
   const [stats, setStats] = useState({
@@ -20,13 +19,8 @@ export default function HomePage() {
     happyCustomers: 0,
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load categories from backend
-    loadCategories();
-    
     // Real stats for portfolio
     setStats({
       totalProducts: 1247,
@@ -35,84 +29,6 @@ export default function HomePage() {
       happyCustomers: 2341,
     });
   }, []);
-
-  const loadCategories = async () => {
-    try {
-      setLoading(true);
-      const response = await apiService.getCategories();
-      if (response.success && response.data) {
-        setCategories(response.data);
-      } else {
-        console.error("Failed to load categories:", response.error);
-        // Fallback to basic categories if API fails
-        setCategories([
-          {
-            name: "Electronics",
-            icon: "📱",
-            count: 342,
-            color: "bg-blue-500",
-            id: "electronics",
-          },
-          {
-            name: "Fashion",
-            icon: "👗",
-            count: 289,
-            color: "bg-pink-500",
-            id: "fashion",
-          },
-          {
-            name: "Home & Garden",
-            icon: "🏠",
-            count: 156,
-            color: "bg-green-500",
-            id: "home-garden",
-          },
-          {
-            name: "Sports",
-            icon: "⚽",
-            count: 98,
-            color: "bg-orange-500",
-            id: "sports",
-          },
-        ]);
-      }
-    } catch (err) {
-      console.error("Error loading categories:", err);
-      // Fallback to basic categories if API fails
-      setCategories([
-        {
-          name: "Electronics",
-          icon: "📱",
-          count: 342,
-          color: "bg-blue-500",
-          id: "electronics",
-        },
-        {
-          name: "Fashion",
-          icon: "👗",
-          count: 289,
-          color: "bg-pink-500",
-          id: "fashion",
-        },
-        {
-          name: "Home & Garden",
-          icon: "🏠",
-          count: 156,
-          color: "bg-green-500",
-          id: "home-garden",
-        },
-        {
-          name: "Sports",
-          icon: "⚽",
-          count: 98,
-          color: "bg-orange-500",
-          id: "sports",
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -123,6 +39,51 @@ export default function HomePage() {
       )}`;
     }
   };
+
+  const categories = [
+    {
+      name: "Electronics",
+      icon: "📱",
+      count: 342,
+      color: "bg-blue-500",
+      id: "electronics",
+    },
+    {
+      name: "Fashion",
+      icon: "👗",
+      count: 289,
+      color: "bg-pink-500",
+      id: "fashion",
+    },
+    {
+      name: "Home & Garden",
+      icon: "🏠",
+      count: 156,
+      color: "bg-green-500",
+      id: "home-garden",
+    },
+    {
+      name: "Sports",
+      icon: "⚽",
+      count: 98,
+      color: "bg-orange-500",
+      id: "sports",
+    },
+    {
+      name: "Books",
+      icon: "📚",
+      count: 234,
+      color: "bg-purple-500",
+      id: "books",
+    },
+    {
+      name: "Automotive",
+      icon: "🚗",
+      count: 67,
+      color: "bg-red-500",
+      id: "automotive",
+    },
+  ];
 
   return (
     <Layout>
@@ -204,33 +165,27 @@ export default function HomePage() {
             Shop by Category
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {loading ? (
-              <p>Loading categories...</p>
-            ) : categories.length === 0 ? (
-              <p>No categories found.</p>
-            ) : (
-              categories.map((category) => (
-                <Link
-                  key={category.name}
-                  href={`/products?category=${category.id}`}
-                  className="group"
-                >
-                  <div className="text-center p-6 rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-all hover:shadow-lg bg-white">
-                    <div
-                      className={`text-4xl mb-3 ${category.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto text-white`}
-                    >
-                      {category.icon}
-                    </div>
-                    <h3 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {category.count} items
-                    </p>
+            {categories.map((category) => (
+              <Link
+                key={category.name}
+                href={`/products?category=${category.id}`}
+                className="group"
+              >
+                <div className="text-center p-6 rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-all hover:shadow-lg bg-white">
+                  <div
+                    className={`text-4xl mb-3 ${category.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto text-white`}
+                  >
+                    {category.icon}
                   </div>
-                </Link>
-              ))
-            )}
+                  <h3 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {category.count} items
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -328,7 +283,7 @@ export default function HomePage() {
           </p>
           <div className="space-x-4">
             <Link
-              href="/seller/register"
+              href="/seller/onboard"
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
             >
               Become a Seller

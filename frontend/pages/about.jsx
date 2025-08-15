@@ -211,7 +211,7 @@ export default function AboutPage() {
                 Start Shopping
               </a>
               <a
-                href="/seller/register"
+                href="/seller/onboard"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors inline-block"
               >
                 Become a Seller

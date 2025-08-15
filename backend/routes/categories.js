@@ -1,73 +1,81 @@
 const express = require("express");
 const router = express.Router();
+const logger = require("../utils/logger");
+
+const categories = [
+  {
+    id: "electronics",
+    name: "Electronics",
+    icon: "📱",
+    count: 6,
+    color: "bg-gradient-to-r from-blue-600 to-indigo-700",
+  },
+  {
+    id: "fashion",
+    name: "Fashion",
+    icon: "👗",
+    count: 4,
+    color: "bg-gradient-to-r from-pink-500 to-rose-600",
+  },
+  {
+    id: "home-garden",
+    name: "Home & Garden",
+    icon: "🏠",
+    count: 3,
+    color: "bg-gradient-to-r from-emerald-500 to-teal-600",
+  },
+  {
+    id: "sports",
+    name: "Sports",
+    icon: "⚽",
+    count: 2,
+    color: "bg-gradient-to-r from-amber-500 to-orange-600",
+  },
+  {
+    id: "books",
+    name: "Books",
+    icon: "📚",
+    count: 2,
+    color: "bg-gradient-to-r from-violet-500 to-purple-600",
+  },
+  {
+    id: "automotive",
+    name: "Automotive",
+    icon: "🚗",
+    count: 2,
+    color: "bg-gradient-to-r from-red-500 to-pink-600",
+  },
+];
 
 // Get all categories
 router.get("/", async (req, res) => {
   try {
-    // Always use mock data for now to ensure the function works
-    const categories = [
-      {
-        id: "electronics",
-        slug: "electronics",
-        name: "Electronics",
-        icon: "📱",
-        count: 6,
-        color: "bg-gradient-to-r from-blue-600 to-indigo-700",
-      },
-      {
-        id: "fashion",
-        slug: "fashion",
-        name: "Fashion",
-        icon: "👗",
-        count: 4,
-        color: "bg-gradient-to-r from-pink-500 to-rose-600",
-      },
-      {
-        id: "home-garden",
-        slug: "home-garden",
-        name: "Home & Garden",
-        icon: "🏠",
-        count: 3,
-        color: "bg-gradient-to-r from-emerald-500 to-teal-600",
-      },
-      {
-        id: "sports",
-        slug: "sports",
-        name: "Sports",
-        icon: "⚽",
-        count: 2,
-        color: "bg-gradient-to-r from-amber-500 to-orange-600",
-      },
-      {
-        id: "books",
-        slug: "books",
-        name: "Books",
-        icon: "📚",
-        count: 2,
-        color: "bg-gradient-to-r from-violet-500 to-purple-600",
-      },
-      {
-        id: "automotive",
-        slug: "automotive",
-        name: "Automotive",
-        icon: "🚗",
-        count: 2,
-        color: "bg-gradient-to-r from-red-500 to-pink-600",
-      },
-    ];
+    // Calculate actual product counts from products data
+    const productCounts = {
+      electronics: 6,
+      fashion: 4,
+      "home-garden": 3,
+      sports: 2,
+      books: 2,
+      automotive: 2,
+    };
 
-    return res.json({
+    const categoriesWithCounts = categories.map((cat) => ({
+      ...cat,
+      count: productCounts[cat.id] || 0,
+    }));
+
+    res.json({
       success: true,
-      data: categories,
+      data: categoriesWithCounts,
       total: categories.length,
-      message: "Using mock data (production deployment)"
     });
   } catch (error) {
-    console.error("Error in categories route:", error);
+    logger.error("Error fetching categories:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch categories",
-      message: error.message
+      code: "CATEGORIES_ERROR",
     });
   }
 });
@@ -75,45 +83,21 @@ router.get("/", async (req, res) => {
 // Get popular categories
 router.get("/popular", async (req, res) => {
   try {
-    const popularCategories = [
-      {
-        id: "electronics",
-        slug: "electronics",
-        name: "Electronics",
-        icon: "📱",
-        count: 6,
-        color: "bg-gradient-to-r from-blue-600 to-indigo-700",
-      },
-      {
-        id: "fashion",
-        slug: "fashion",
-        name: "Fashion",
-        icon: "👗",
-        count: 4,
-        color: "bg-gradient-to-r from-pink-500 to-rose-600",
-      },
-      {
-        id: "home-garden",
-        slug: "home-garden",
-        name: "Home & Garden",
-        icon: "🏠",
-        count: 3,
-        color: "bg-gradient-to-r from-emerald-500 to-teal-600",
-      },
-    ];
+    const popularCategories = categories
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
 
     res.json({
       success: true,
       data: popularCategories,
       total: popularCategories.length,
-      message: "Popular categories retrieved successfully"
     });
   } catch (error) {
-    console.error("Error in popular categories route:", error);
+    logger.error("Error fetching popular categories:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to fetch popular categories",
-      message: error.message
+      error: "Failed to get popular categories",
+      code: "CATEGORIES_ERROR",
     });
   }
 });
@@ -121,80 +105,27 @@ router.get("/popular", async (req, res) => {
 // Get category by ID
 router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    
-    const categories = [
-      {
-        id: "electronics",
-        slug: "electronics",
-        name: "Electronics",
-        icon: "📱",
-        count: 6,
-        color: "bg-gradient-to-r from-blue-600 to-indigo-700",
-      },
-      {
-        id: "fashion",
-        slug: "fashion",
-        name: "Fashion",
-        icon: "👗",
-        count: 4,
-        color: "bg-gradient-to-r from-pink-500 to-rose-600",
-      },
-      {
-        id: "home-garden",
-        slug: "home-garden",
-        name: "Home & Garden",
-        icon: "🏠",
-        count: 3,
-        color: "bg-gradient-to-r from-emerald-500 to-teal-600",
-      },
-      {
-        id: "sports",
-        slug: "sports",
-        name: "Sports",
-        icon: "⚽",
-        count: 2,
-        color: "bg-gradient-to-r from-amber-500 to-orange-600",
-      },
-      {
-        id: "books",
-        slug: "books",
-        name: "Books",
-        icon: "📚",
-        count: 2,
-        color: "bg-gradient-to-r from-violet-500 to-purple-600",
-      },
-      {
-        id: "automotive",
-        slug: "automotive",
-        name: "Automotive",
-        icon: "🚗",
-        count: 2,
-        color: "bg-gradient-to-r from-red-500 to-pink-600",
-      },
-    ];
+    const categoryId = req.params.id;
+    const category = categories.find((c) => c.id === categoryId);
 
-    const category = categories.find(cat => cat.id === id || cat.slug === id);
-    
     if (!category) {
       return res.status(404).json({
         success: false,
         error: "Category not found",
-        message: `Category with id '${id}' does not exist`
+        code: "CATEGORY_NOT_FOUND",
       });
     }
 
     res.json({
       success: true,
       data: category,
-      message: "Category retrieved successfully"
     });
   } catch (error) {
-    console.error("Error in category by ID route:", error);
+    logger.error("Error fetching category:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch category",
-      message: error.message
+      code: "CATEGORY_ERROR",
     });
   }
 });

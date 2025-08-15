@@ -1,49 +1,65 @@
 const { sequelize, Sequelize } = require("../config/database");
 
-// Import models
-const User = require("./user")(sequelize, Sequelize);
-const Seller = require("./seller")(sequelize, Sequelize);
-const Product = require("./product")(sequelize, Sequelize);
-const Category = require("./category")(sequelize, Sequelize);
-const Listing = require("./listing")(sequelize, Sequelize);
-const ClickLog = require("./clickLog")(sequelize, Sequelize);
-const ProductMatch = require("./productMatch")(sequelize, Sequelize);
-// Temporarily disabled to get basic API running
-// const ScrapingJob = require("./scrapingJob")(sequelize, Sequelize);
-const Price = require("./price")(sequelize, Sequelize);
+// Only import models if sequelize is available
+let User, Seller, Product, Category, Listing, ClickLog, ProductMatch, Price;
 
-// Define associations
-User.hasMany(Listing, { foreignKey: "userId", as: "listings" });
-Listing.belongsTo(User, { foreignKey: "userId", as: "user" });
+if (sequelize) {
+  // Import models when database is available
+  User = require("./user")(sequelize, Sequelize);
+  Seller = require("./seller")(sequelize, Sequelize);
+  Product = require("./product")(sequelize, Sequelize);
+  Category = require("./category")(sequelize, Sequelize);
+  Listing = require("./listing")(sequelize, Sequelize);
+  ClickLog = require("./clickLog")(sequelize, Sequelize);
+  ProductMatch = require("./productMatch")(sequelize, Sequelize);
+  Price = require("./price")(sequelize, Sequelize);
+} else {
+  // Create dummy models when running without database
+  console.log("📝 Running without database - using dummy models");
+  User = null;
+  Seller = null;
+  Product = null;
+  Category = null;
+  Listing = null;
+  ClickLog = null;
+  ProductMatch = null;
+  Price = null;
+}
 
-Seller.hasMany(Listing, { foreignKey: "sellerId", as: "listings" });
-Listing.belongsTo(Seller, { foreignKey: "sellerId", as: "seller" });
+// Define associations only if models exist
+if (sequelize && User && Seller && Product && Category && Listing && ClickLog && ProductMatch) {
+  User.hasMany(Listing, { foreignKey: "userId", as: "listings" });
+  Listing.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-Product.hasMany(Listing, { foreignKey: "productId", as: "listings" });
-Listing.belongsTo(Product, { foreignKey: "productId", as: "product" });
+  Seller.hasMany(Listing, { foreignKey: "sellerId", as: "listings" });
+  Listing.belongsTo(Seller, { foreignKey: "sellerId", as: "seller" });
 
-Category.hasMany(Listing, { foreignKey: "categoryId", as: "listings" });
-Listing.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
+  Product.hasMany(Listing, { foreignKey: "productId", as: "listings" });
+  Listing.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
-// Click tracking associations
-Listing.hasMany(ClickLog, { foreignKey: "listingId", as: "clickLogs" });
-ClickLog.belongsTo(Listing, { foreignKey: "listingId", as: "listing" });
+  Category.hasMany(Listing, { foreignKey: "categoryId", as: "listings" });
+  Listing.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
 
-Seller.hasMany(ClickLog, { foreignKey: "sellerId", as: "clickLogs" });
-ClickLog.belongsTo(Seller, { foreignKey: "sellerId", as: "seller" });
+  // Click tracking associations
+  Listing.hasMany(ClickLog, { foreignKey: "listingId", as: "clickLogs" });
+  ClickLog.belongsTo(Listing, { foreignKey: "listingId", as: "listing" });
 
-// Product matching associations
-Product.hasMany(ProductMatch, { foreignKey: "productId", as: "matches" });
-ProductMatch.belongsTo(Product, { foreignKey: "productId", as: "product" });
+  Seller.hasMany(ClickLog, { foreignKey: "sellerId", as: "clickLogs" });
+  ClickLog.belongsTo(Seller, { foreignKey: "sellerId", as: "seller" });
 
-Product.hasMany(ProductMatch, {
-  foreignKey: "matchedProductId",
-  as: "matchedBy",
-});
-ProductMatch.belongsTo(Product, {
-  foreignKey: "matchedProductId",
-  as: "matchedProduct",
-});
+  // Product matching associations
+  Product.hasMany(ProductMatch, { foreignKey: "productId", as: "matches" });
+  ProductMatch.belongsTo(Product, { foreignKey: "productId", as: "product" });
+
+  Product.hasMany(ProductMatch, {
+    foreignKey: "matchedProductId",
+    as: "matchedBy",
+  });
+  ProductMatch.belongsTo(Product, {
+    foreignKey: "matchedProductId",
+    as: "matchedProduct",
+  });
+}
 
 // Export models and sequelize instance
 module.exports = {

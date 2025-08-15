@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../../components/Layout";
+import { apiService } from "../../services/api";
 import {
   Star,
   Users,
@@ -18,7 +19,6 @@ import {
   Eye,
   ShoppingCart,
 } from "lucide-react";
-import { apiService } from "../../services/api";
 
 export default function SellerProfilePage() {
   const router = useRouter();
@@ -27,6 +27,7 @@ export default function SellerProfilePage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("products");
+  const [addingToCart, setAddingToCart] = useState(null);
 
   useEffect(() => {
     console.log("🔄 Seller page useEffect triggered");
@@ -44,7 +45,7 @@ export default function SellerProfilePage() {
     } else {
       console.log("❌ No ID found in router query");
     }
-  }, [id, router.isReady, router.query]);
+  }, [id, router.isReady]);
 
   const loadSellerData = async () => {
     try {
@@ -101,6 +102,27 @@ export default function SellerProfilePage() {
       }
     }
     return fallback;
+  };
+
+  const addToCart = async (product) => {
+    try {
+      setAddingToCart(product.id);
+      console.log("🛒 Adding product to cart:", product);
+      const response = await apiService.addToCart(product.id, 1, product);
+
+      if (response.success) {
+        // You could add a toast notification here
+        console.log("✅ Product added to cart successfully");
+        // Dispatch event to update cart counter in navigation
+        window.dispatchEvent(new CustomEvent("cartUpdated"));
+      } else {
+        console.error("❌ Failed to add product to cart:", response.error);
+      }
+    } catch (error) {
+      console.error("❌ Error adding product to cart:", error);
+    } finally {
+      setAddingToCart(null);
+    }
   };
 
   if (loading) {
@@ -176,10 +198,10 @@ export default function SellerProfilePage() {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 -mt-16">
+        <div className="container mx-auto px-4 mt-8">
           {/* Seller Info Card - FIXED LAYOUT */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               {/* Basic Info - FIXED WIDTH */}
               <div className="lg:col-span-2">
                 <div className="flex items-center space-x-3 mb-4">
@@ -215,7 +237,7 @@ export default function SellerProfilePage() {
 
               {/* Stats - FIXED LAYOUT TO PREVENT CUTOFF */}
               <div className="lg:col-span-1">
-                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 h-fit">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {seller.rating}
@@ -353,9 +375,15 @@ export default function SellerProfilePage() {
                             </div>
 
                             <div className="flex space-x-2">
-                              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
+                              <button
+                                onClick={() => addToCart(product)}
+                                disabled={addingToCart === product.id}
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50"
+                              >
                                 <ShoppingCart className="w-4 h-4 mr-2" />
-                                Add to Cart
+                                {addingToCart === product.id
+                                  ? "Adding..."
+                                  : "Add to Cart"}
                               </button>
                               <Link
                                 href={`/product/${product.id}`}

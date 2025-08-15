@@ -1,705 +1,825 @@
 const express = require("express");
 const router = express.Router();
-const { Product, Seller, Category, Listing, sequelize } = require("../models");
+const logger = require("../utils/logger");
 
-// Expanded products data with 30+ products across all categories
-const mockProducts = [
-  // TechStore Products (sellerId: 1) - 7 products
+// Comprehensive product database with products for all categories
+const products = [
+  // ===== ELECTRONICS CATEGORY =====
   {
     id: 1,
-    title: "iPhone 15 Pro",
-    name: "iPhone 15 Pro",
-    price: 999.99,
-    originalPrice: 1099.99,
-    category: "smartphones",
-    sellerId: 1,
-    seller: "TechStore",
+    title: "iPhone 15 Pro Max - 256GB - Natural Titanium",
+    price: 1199.99,
+    originalPrice: 1299.99,
     image:
-      "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=300&fit=crop",
-    description: "Latest iPhone with advanced features and titanium design",
-    rating: 4.8,
-    reviewCount: 245,
-    views: 12500,
-    stock: 50,
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "smartphones",
     brand: "Apple",
+    seller: "TechStore Pro",
+    rating: 4.8,
+    reviewCount: 1247,
+    inStock: true,
+    stockQuantity: 45,
+    discount: 8,
+    views: 15420,
+    sales: 89,
+    description:
+      "Experience the future of mobile technology with the iPhone 15 Pro Max. Featuring the revolutionary A17 Pro chip, stunning 6.7-inch Super Retina XDR display, and advanced camera system with 5x optical zoom.",
+    features: [
+      "A17 Pro chip with 6-core GPU",
+      "6.7-inch Super Retina XDR display",
+      "Pro camera system with 5x optical zoom",
+      "Aerospace-grade titanium design",
+      "USB-C connector",
+      "Action button for quick access",
+    ],
+    specifications: {
+      Display: "6.7-inch Super Retina XDR OLED",
+      Processor: "A17 Pro chip with 6-core GPU",
+      Storage: "256GB",
+      Camera: "48MP Main + 12MP Ultra Wide + 12MP Telephoto",
+      Battery: "Up to 29 hours video playback",
+      "Operating System": "iOS 17",
+    },
   },
   {
     id: 2,
-    title: "Sony WH-1000XM5 Headphones",
-    name: "Sony WH-1000XM5 Headphones",
-    price: 349.99,
-    originalPrice: 399.99,
-    category: "audio",
-    sellerId: 1,
-    seller: "TechStore",
+    title: "Samsung Galaxy S24 Ultra - 256GB - Titanium Gray",
+    price: 1099.99,
+    originalPrice: 1199.99,
     image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
-    description: "Industry-leading noise canceling wireless headphones",
-    rating: 4.8,
-    reviewCount: 189,
-    views: 8900,
-    stock: 75,
-    brand: "Sony",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "smartphones",
+    brand: "Samsung",
+    seller: "Mobile World",
+    rating: 4.7,
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 32,
+    discount: 8,
+    views: 12890,
+    sales: 67,
+    description:
+      "The Samsung Galaxy S24 Ultra represents the pinnacle of Android smartphones, featuring the Snapdragon 8 Gen 3 processor, S Pen integration, and revolutionary AI capabilities.",
+    features: [
+      "Snapdragon 8 Gen 3 processor",
+      "6.8-inch Dynamic AMOLED 2X display",
+      "200MP main camera with 5x optical zoom",
+      "S Pen integration",
+      "AI-powered features",
+      "5000mAh battery",
+    ],
+    specifications: {
+      Display: "6.8-inch Dynamic AMOLED 2X",
+      Processor: "Snapdragon 8 Gen 3",
+      Storage: "256GB",
+      Camera: "200MP Main + 12MP Ultra Wide + 50MP Telephoto",
+      Battery: "5000mAh",
+      "Operating System": "Android 14 with One UI 6.1",
+    },
   },
   {
     id: 3,
-    title: "Samsung Galaxy S24 Ultra",
-    name: "Samsung Galaxy S24 Ultra",
-    price: 1199.99,
-    originalPrice: 1299.99,
-    category: "smartphones",
-    sellerId: 1,
-    seller: "TechStore",
+    title: "MacBook Pro 14 M3 Chip - 512GB SSD",
+    price: 1999.99,
+    originalPrice: 2199.99,
     image:
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=300&fit=crop",
-    description: "Flagship Android phone with S Pen and AI features",
-    rating: 4.7,
-    reviewCount: 312,
-    views: 15200,
-    stock: 40,
-    brand: "Samsung",
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "laptops",
+    brand: "Apple",
+    seller: "Apple Store",
+    rating: 4.9,
+    reviewCount: 567,
+    inStock: true,
+    stockQuantity: 28,
+    discount: 9,
+    views: 9870,
+    sales: 45,
+    description:
+      "The MacBook Pro with M3 chip delivers exceptional performance for professional workflows. Experience blazing-fast speeds and incredible battery life in a portable design.",
+    features: [
+      "M3 chip with 8-core CPU and 10-core GPU",
+      "14-inch Liquid Retina XDR display",
+      "Up to 22 hours battery life",
+      "8GB unified memory",
+      "512GB SSD storage",
+      "Thunderbolt 4 ports",
+    ],
+    specifications: {
+      Display: "14-inch Liquid Retina XDR",
+      Processor: "M3 chip with 8-core CPU",
+      Memory: "8GB unified memory",
+      Storage: "512GB SSD",
+      Battery: "Up to 22 hours",
+      "Operating System": "macOS Sonoma",
+    },
   },
   {
     id: 4,
-    title: "Dell XPS 13 Laptop",
-    name: "Dell XPS 13 Laptop",
-    price: 1199.99,
-    originalPrice: 1399.99,
-    category: "laptops",
-    sellerId: 1,
-    seller: "TechStore",
+    title: "Dell XPS 13 Plus - Intel i7 - 16GB RAM",
+    price: 1499.99,
+    originalPrice: 1699.99,
     image:
-      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
-    description: "Ultra-portable laptop with stunning InfinityEdge display",
-    rating: 4.7,
-    reviewCount: 203,
-    views: 9240,
-    stock: 35,
+      "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "laptops",
     brand: "Dell",
+    seller: "TechStore Pro",
+    rating: 4.6,
+    reviewCount: 423,
+    inStock: true,
+    stockQuantity: 19,
+    discount: 12,
+    views: 7650,
+    sales: 38,
+    description:
+      "The Dell XPS 13 Plus combines stunning design with powerful performance. Features an edge-to-edge display, premium build quality, and the latest Intel processors.",
+    features: [
+      "13th Gen Intel Core i7 processor",
+      "13.4-inch 4K OLED display",
+      "16GB LPDDR5 RAM",
+      "512GB PCIe SSD",
+      "Intel Iris Xe graphics",
+      "Thunderbolt 4 ports",
+    ],
+    specifications: {
+      Display: "13.4-inch 4K OLED",
+      Processor: "Intel Core i7-1355U",
+      Memory: "16GB LPDDR5",
+      Storage: "512GB PCIe SSD",
+      Graphics: "Intel Iris Xe",
+      "Operating System": "Windows 11 Pro",
+    },
   },
   {
     id: 5,
-    title: "Gaming Mechanical Keyboard RGB",
-    name: "Gaming Mechanical Keyboard RGB",
-    price: 129.99,
-    originalPrice: 159.99,
-    category: "gaming",
-    sellerId: 1,
-    seller: "TechStore",
+    title: "Sony WH-1000XM5 Wireless Headphones",
+    price: 349.99,
+    originalPrice: 399.99,
     image:
-      "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "audio",
+    brand: "Sony",
+    seller: "Audio Haven",
+    rating: 4.8,
+    reviewCount: 2156,
+    inStock: true,
+    stockQuantity: 67,
+    discount: 13,
+    views: 18920,
+    sales: 234,
     description:
-      "RGB backlit mechanical gaming keyboard with Cherry MX switches",
-    rating: 4.5,
-    reviewCount: 178,
-    views: 5420,
-    stock: 65,
-    brand: "Razer",
+      "Experience industry-leading noise cancellation with the Sony WH-1000XM5. Features 30-hour battery life, premium comfort, and exceptional sound quality.",
+    features: [
+      "Industry-leading noise cancellation",
+      "30-hour battery life",
+      "Premium comfort design",
+      "Exceptional sound quality",
+      "Quick charge (3 min = 3 hours)",
+      "Touch controls",
+    ],
+    specifications: {
+      Driver: "30mm dynamic",
+      Frequency: "4Hz-40,000Hz",
+      Battery: "30 hours (NC on)",
+      Weight: "250g",
+      Connectivity: "Bluetooth 5.2",
+      Codecs: "LDAC, AAC, SBC",
+    },
   },
   {
     id: 6,
-    title: "LG 27-inch 4K Monitor",
-    name: "LG 27-inch 4K Monitor",
-    price: 449.99,
-    originalPrice: 549.99,
-    category: "monitors",
-    sellerId: 1,
-    seller: "TechStore",
+    title: 'Samsung 65" QLED 4K Smart TV',
+    price: 1299.99,
+    originalPrice: 1599.99,
     image:
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
-    description: "4K UHD IPS monitor with HDR support for professionals",
-    rating: 4.6,
-    reviewCount: 156,
-    views: 6750,
-    stock: 25,
-    brand: "LG",
-  },
-  {
-    id: 7,
-    title: "Wireless Gaming Mouse",
-    name: "Wireless Gaming Mouse",
-    price: 89.99,
-    originalPrice: 119.99,
-    category: "gaming",
-    sellerId: 1,
-    seller: "TechStore",
-    image:
-      "https://images.unsplash.com/photo-1615663235685-4d5ee2ff7b43?w=400&h=300&fit=crop",
-    description: "High-precision wireless gaming mouse with RGB lighting",
-    rating: 4.4,
-    reviewCount: 134,
-    views: 4200,
-    stock: 80,
-    brand: "Logitech",
+      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop",
+    category: "electronics",
+    subcategory: "tv",
+    brand: "Samsung",
+    seller: "Electronics Plus",
+    rating: 4.7,
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 23,
+    discount: 19,
+    views: 11230,
+    sales: 56,
+    description:
+      "Immerse yourself in stunning 4K content with Samsung's QLED technology. Features Quantum HDR, Smart TV capabilities, and a sleek design.",
+    features: [
+      "65-inch QLED 4K display",
+      "Quantum HDR technology",
+      "Smart TV with apps",
+      "Voice control",
+      "Gaming mode",
+      "Multiple HDMI ports",
+    ],
+    specifications: {
+      Display: "65-inch QLED 4K",
+      Resolution: "3840 x 2160",
+      HDR: "Quantum HDR",
+      "Smart TV": "Tizen OS",
+      Connectivity: "WiFi, Bluetooth",
+      Ports: "4 HDMI, 2 USB",
+    },
   },
 
-  // AppleStore Products (sellerId: 2) - 6 products
+  // ===== FASHION CATEGORY =====
+  {
+    id: 7,
+    title: "Nike Air Max 270 - Men's Running Shoes",
+    price: 129.99,
+    originalPrice: 149.99,
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    category: "fashion",
+    subcategory: "footwear",
+    brand: "Nike",
+    seller: "SportStyle",
+    rating: 4.6,
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 156,
+    discount: 13,
+    views: 8750,
+    sales: 234,
+    description:
+      "Step into comfort with the Nike Air Max 270. Features the tallest Air unit yet for all-day comfort and a bold design that's perfect for everyday wear.",
+    features: [
+      "Tallest Air unit yet",
+      "Breathable mesh upper",
+      "Foam midsole",
+      "Rubber outsole",
+      "All-day comfort",
+      "Bold design",
+    ],
+    specifications: {
+      Upper: "Breathable mesh",
+      Midsole: "Foam with Air unit",
+      Outsole: "Rubber",
+      Weight: "10.5 oz",
+      Drop: "10mm",
+      Use: "Running, Lifestyle",
+    },
+  },
   {
     id: 8,
-    title: "MacBook Air M3",
-    name: "MacBook Air M3",
-    price: 1299.99,
-    originalPrice: 1399.99,
-    category: "laptops",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "Levi's 501 Original Jeans - Men's",
+    price: 89.99,
+    originalPrice: 99.99,
     image:
-      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop",
-    description: "Powerful laptop with M3 chip for professionals and creators",
-    rating: 4.9,
-    reviewCount: 412,
-    views: 15600,
-    stock: 25,
-    brand: "Apple",
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
+    category: "fashion",
+    subcategory: "clothing",
+    brand: "Levi's",
+    seller: "Denim Depot",
+    rating: 4.5,
+    reviewCount: 1247,
+    inStock: true,
+    stockQuantity: 89,
+    discount: 10,
+    views: 15670,
+    sales: 456,
+    description:
+      "The iconic Levi's 501 Original Jeans. Classic straight fit with authentic details and premium denim that gets better with every wear.",
+    features: [
+      "Classic straight fit",
+      "Premium denim",
+      "Authentic details",
+      "Button fly",
+      "5-pocket design",
+      "Iconic red tab",
+    ],
+    specifications: {
+      Fit: "Straight",
+      Rise: "Mid-rise",
+      Leg: "Straight leg",
+      Fabric: "100% Cotton denim",
+      Wash: "Medium wash",
+      Care: "Machine wash cold",
+    },
   },
   {
     id: 9,
-    title: "iPad Pro 12.9-inch M2",
-    name: "iPad Pro 12.9-inch M2",
-    price: 1099.99,
-    originalPrice: 1199.99,
-    category: "tablets",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "Michael Kors Jet Set Crossbody Bag",
+    price: 199.99,
+    originalPrice: 249.99,
     image:
-      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    category: "fashion",
+    subcategory: "accessories",
+    brand: "Michael Kors",
+    seller: "Luxury Bags",
+    rating: 4.7,
+    reviewCount: 567,
+    inStock: true,
+    stockQuantity: 34,
+    discount: 20,
+    views: 8920,
+    sales: 123,
     description:
-      "Professional tablet with M2 chip and Liquid Retina XDR display",
-    rating: 4.8,
-    reviewCount: 298,
-    views: 11200,
-    stock: 40,
-    brand: "Apple",
+      "Elevate your style with the Michael Kors Jet Set Crossbody Bag. Crafted from premium saffiano leather with gold-tone hardware and adjustable strap.",
+    features: [
+      "Premium saffiano leather",
+      "Gold-tone hardware",
+      "Adjustable strap",
+      "Multiple compartments",
+      "Logo detail",
+      "Crossbody design",
+    ],
+    specifications: {
+      Material: "Saffiano leather",
+      Hardware: "Gold-tone",
+      Dimensions: "9.5 x 2.5 x 7.5",
+      Strap: "Adjustable 22",
+      Interior: "Lined",
+      Closure: "Zip top",
+    },
   },
   {
     id: 10,
-    title: "AirPods Pro (3rd Gen)",
-    name: "AirPods Pro (3rd Gen)",
-    price: 249.99,
-    originalPrice: 279.99,
-    category: "audio",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "Ray-Ban Aviator Classic - Gold Frame",
+    price: 159.99,
+    originalPrice: 179.99,
     image:
-      "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+    category: "fashion",
+    subcategory: "accessories",
+    brand: "Ray-Ban",
+    seller: "Sunglass Hut",
+    rating: 4.8,
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 67,
+    discount: 11,
+    views: 12340,
+    sales: 189,
     description:
-      "Active noise cancellation wireless earbuds with spatial audio",
-    rating: 4.7,
-    reviewCount: 567,
-    views: 18900,
-    stock: 85,
-    brand: "Apple",
+      "The iconic Ray-Ban Aviator sunglasses. Classic gold frame with green lenses, perfect for any occasion and offering 100% UV protection.",
+    features: [
+      "Classic aviator design",
+      "Gold frame",
+      "Green lenses",
+      "100% UV protection",
+      "Lightweight metal frame",
+      "Iconic design",
+    ],
+    specifications: {
+      Frame: "Gold metal",
+      Lens: "Green",
+      "UV Protection": "100%",
+      "Lens Width": "58mm",
+      Bridge: "14mm",
+      Temple: "135mm",
+    },
   },
+
+  // ===== HOME & GARDEN CATEGORY =====
   {
     id: 11,
-    title: "Apple Watch Series 9",
-    name: "Apple Watch Series 9",
-    price: 399.99,
-    originalPrice: 429.99,
-    category: "wearables",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "Philips Hue White & Color Ambiance Starter Kit",
+    price: 199.99,
+    originalPrice: 249.99,
     image:
-      "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop",
+    category: "home-garden",
+    subcategory: "lighting",
+    brand: "Philips",
+    seller: "Smart Home Hub",
+    rating: 4.7,
+    reviewCount: 1234,
+    inStock: true,
+    stockQuantity: 45,
+    discount: 20,
+    views: 15670,
+    sales: 234,
     description:
-      "Advanced fitness and health tracking with Always-On Retina display",
-    rating: 4.6,
-    reviewCount: 324,
-    views: 13400,
-    stock: 55,
-    brand: "Apple",
+      "Transform your home with Philips Hue smart lighting. Control your lights from anywhere, set schedules, and create the perfect ambiance for any mood.",
+    features: [
+      "3 A19 bulbs",
+      "Hue Bridge",
+      "16 million colors",
+      "Voice control compatible",
+      "Schedule automation",
+      "Energy efficient",
+    ],
+    specifications: {
+      Bulbs: "3 A19 E26",
+      Power: "9W (60W equivalent)",
+      Colors: "16 million",
+      Connectivity: "Zigbee",
+      Lifespan: "25,000 hours",
+      Compatibility: "Alexa, Google, Apple",
+    },
   },
   {
     id: 12,
-    title: "MacBook Pro 14-inch M3",
-    name: "MacBook Pro 14-inch M3",
-    price: 1999.99,
-    originalPrice: 2199.99,
-    category: "laptops",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "Dyson V15 Detect Cordless Vacuum",
+    price: 699.99,
+    originalPrice: 799.99,
     image:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop",
-    description: "Pro laptop with M3 Pro chip for demanding workflows",
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=400&fit=crop",
+    category: "home-garden",
+    subcategory: "cleaning",
+    brand: "Dyson",
+    seller: "Home Essentials",
     rating: 4.9,
-    reviewCount: 187,
-    views: 8900,
-    stock: 18,
-    brand: "Apple",
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 23,
+    discount: 13,
+    views: 9870,
+    sales: 156,
+    description:
+      "Experience powerful cleaning with the Dyson V15 Detect. Features laser dust detection, 60-minute runtime, and advanced filtration for a cleaner home.",
+    features: [
+      "Laser dust detection",
+      "60-minute runtime",
+      "Advanced filtration",
+      "LCD screen",
+      "Multiple attachments",
+      "Cordless design",
+    ],
+    specifications: {
+      Runtime: "60 minutes",
+      Suction: "240 AW",
+      Filtration: "HEPA",
+      Weight: "2.95 kg",
+      Charging: "4.5 hours",
+      "Dust Bin": "0.54L",
+    },
   },
   {
     id: 13,
-    title: "iPhone 14 Pro Max",
-    name: "iPhone 14 Pro Max",
-    price: 899.99,
-    originalPrice: 1099.99,
-    category: "smartphones",
-    sellerId: 2,
-    seller: "AppleStore",
+    title: "IKEA KALLAX Shelf Unit - White",
+    price: 89.99,
+    originalPrice: 99.99,
     image:
-      "https://images.unsplash.com/photo-1678911820864-e2c567c655d7?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop",
+    category: "home-garden",
+    subcategory: "furniture",
+    brand: "IKEA",
+    seller: "Furniture World",
+    rating: 4.4,
+    reviewCount: 567,
+    inStock: true,
+    stockQuantity: 78,
+    discount: 10,
+    views: 6540,
+    sales: 89,
     description:
-      "Previous generation iPhone with Dynamic Island and pro cameras",
-    rating: 4.7,
-    reviewCount: 456,
-    views: 16800,
-    stock: 30,
-    brand: "Apple",
+      "Versatile KALLAX shelf unit perfect for organizing any room. Features a clean, modern design with multiple storage compartments.",
+    features: [
+      "Clean modern design",
+      "Multiple compartments",
+      "Easy assembly",
+      "Versatile storage",
+      "Sturdy construction",
+      "White finish",
+    ],
+    specifications: {
+      Dimensions: '77" x 30" x 15"',
+      Material: "Particleboard, foil",
+      Weight: "44 lbs",
+      Compartments: "8",
+      Assembly: "Required",
+      Finish: "White",
+    },
   },
 
-  // ShoesWorld Products (sellerId: 3) - 6 products
+  // ===== SPORTS CATEGORY =====
   {
     id: 14,
-    title: "Nike Air Jordan 1 Retro High",
-    name: "Nike Air Jordan 1 Retro High",
-    price: 179.99,
-    originalPrice: 200.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "Wilson Pro Staff Tennis Racket",
+    price: 249.99,
+    originalPrice: 299.99,
     image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop",
+    category: "sports",
+    subcategory: "tennis",
+    brand: "Wilson",
+    seller: "SportStyle",
+    rating: 4.8,
+    reviewCount: 456,
+    inStock: true,
+    stockQuantity: 34,
+    discount: 17,
+    views: 7890,
+    sales: 67,
     description:
-      "Classic basketball shoes with iconic silhouette and premium leather",
-    rating: 4.7,
-    reviewCount: 445,
-    views: 22100,
-    stock: 100,
-    brand: "Nike",
+      "Professional-grade tennis racket used by top players. Features advanced technology for power, control, and feel on every shot.",
+    features: [
+      "Professional grade",
+      "Advanced technology",
+      "Power and control",
+      "Premium materials",
+      "Tournament approved",
+      "Wilson guarantee",
+    ],
+    specifications: {
+      "Head Size": "97 sq inches",
+      Weight: "315g",
+      Balance: "315mm",
+      "String Pattern": "16x19",
+      "Grip Size": "4 3/8",
+      Frame: "Graphite",
+    },
   },
   {
     id: 15,
-    title: "Adidas Ultraboost 22",
-    name: "Adidas Ultraboost 22",
-    price: 149.99,
-    originalPrice: 180.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "Nike Dri-FIT Training Shorts - Men's",
+    price: 39.99,
+    originalPrice: 49.99,
     image:
-      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop",
-    description: "Premium running shoes with Boost midsole technology",
-    rating: 4.7,
-    reviewCount: 378,
-    views: 16700,
-    stock: 85,
-    brand: "Adidas",
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop",
+    category: "sports",
+    subcategory: "athletic-wear",
+    brand: "Nike",
+    seller: "SportStyle",
+    rating: 4.6,
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 156,
+    discount: 20,
+    views: 12340,
+    sales: 234,
+    description:
+      "Stay comfortable during your workout with Nike Dri-FIT training shorts. Features moisture-wicking technology and a comfortable fit for any activity.",
+    features: [
+      "Dri-FIT technology",
+      "Moisture wicking",
+      "Comfortable fit",
+      "Built-in liner",
+      "Elastic waistband",
+      "Quick-dry fabric",
+    ],
+    specifications: {
+      Material: "100% Polyester",
+      Fit: "Standard",
+      Length: "7-inch inseam",
+      Waist: "Elastic with drawstring",
+      Liner: "Built-in",
+      Care: "Machine wash cold",
+    },
   },
+
+  // ===== BOOKS CATEGORY =====
   {
     id: 16,
-    title: "Converse Chuck Taylor All Star",
-    name: "Converse Chuck Taylor All Star",
-    price: 59.99,
-    originalPrice: 75.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "The Psychology of Money - Morgan Housel",
+    price: 24.99,
+    originalPrice: 29.99,
     image:
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop",
-    description: "Classic canvas sneakers with timeless design",
-    rating: 4.4,
-    reviewCount: 289,
-    views: 8900,
-    stock: 150,
-    brand: "Converse",
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop",
+    category: "books",
+    subcategory: "business",
+    brand: "Harriman House",
+    seller: "Book Haven",
+    rating: 4.8,
+    reviewCount: 2156,
+    inStock: true,
+    stockQuantity: 89,
+    discount: 17,
+    views: 23450,
+    sales: 567,
+    description:
+      "Timeless lessons on wealth, greed, and happiness. A must-read for anyone interested in understanding the psychology behind financial decisions.",
+    features: [
+      "Timeless financial wisdom",
+      "Easy to understand",
+      "Real-world examples",
+      "Psychology insights",
+      "Bestseller",
+      "Hardcover edition",
+    ],
+    specifications: {
+      Pages: "256",
+      Format: "Hardcover",
+      Language: "English",
+      Publisher: "Harriman House",
+      ISBN: "978-0857197689",
+      Dimensions: "6.1 x 9.2",
+    },
   },
   {
     id: 17,
-    title: "Vans Old Skool Classic",
-    name: "Vans Old Skool Classic",
-    price: 64.99,
-    originalPrice: 80.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "Atomic Habits - James Clear",
+    price: 19.99,
+    originalPrice: 24.99,
     image:
-      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=400&fit=crop",
+    category: "books",
+    subcategory: "self-help",
+    brand: "Avery",
+    seller: "Book Haven",
+    rating: 4.9,
+    reviewCount: 3456,
+    inStock: true,
+    stockQuantity: 123,
+    discount: 20,
+    views: 45670,
+    sales: 890,
     description:
-      "Iconic skate shoes with signature side stripe and waffle outsole",
-    rating: 4.5,
-    reviewCount: 201,
-    views: 7800,
-    stock: 95,
-    brand: "Vans",
+      "Transform your life with tiny changes that lead to remarkable results. Learn how to build good habits and break bad ones.",
+    features: [
+      "Proven strategies",
+      "Easy to implement",
+      "Science-based approach",
+      "Practical examples",
+      "Bestseller",
+      "Paperback edition",
+    ],
+    specifications: {
+      Pages: "320",
+      Format: "Paperback",
+      Language: "English",
+      Publisher: "Avery",
+      ISBN: "978-0735211292",
+      Dimensions: "5.5 x 8.4",
+    },
   },
+
+  // ===== AUTOMOTIVE CATEGORY =====
   {
     id: 18,
-    title: "New Balance 990v5 Made in USA",
-    name: "New Balance 990v5 Made in USA",
-    price: 184.99,
-    originalPrice: 220.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "Michelin Pilot Sport 4S Tires - Set of 4",
+    price: 899.99,
+    originalPrice: 1099.99,
     image:
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop",
-    description: "Premium made in USA running shoes with superior comfort",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop",
+    category: "automotive",
+    subcategory: "tires",
+    brand: "Michelin",
+    seller: "Auto Parts Pro",
     rating: 4.8,
-    reviewCount: 156,
-    views: 5400,
-    stock: 45,
-    brand: "New Balance",
+    reviewCount: 567,
+    inStock: true,
+    stockQuantity: 23,
+    discount: 18,
+    views: 8920,
+    sales: 89,
+    description:
+      "Ultra-high performance summer tires designed for sports cars and high-performance vehicles. Features advanced compound technology for exceptional grip.",
+    features: [
+      "Ultra-high performance",
+      "Summer compound",
+      "Exceptional grip",
+      "Wet weather handling",
+      "Long tread life",
+      "Set of 4 tires",
+    ],
+    specifications: {
+      Size: "245/40R18",
+      "Load Rating": "97Y",
+      "Tread Depth": "8.5/32",
+      Compound: "Summer",
+      Warranty: "30,000 miles",
+      Type: "Performance",
+    },
   },
   {
     id: 19,
-    title: "Puma RS-X Reinvention",
-    name: "Puma RS-X Reinvention",
-    price: 119.99,
-    originalPrice: 140.0,
-    category: "footwear",
-    sellerId: 3,
-    seller: "ShoesWorld",
+    title: "Dash Cam - 4K Ultra HD Recording",
+    price: 149.99,
+    originalPrice: 199.99,
     image:
-      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop",
-    description:
-      "Retro-futuristic sneakers with bold colorways and chunky silhouette",
-    rating: 4.3,
-    reviewCount: 167,
-    views: 6200,
-    stock: 70,
-    brand: "Puma",
-  },
-
-  // HomeGoods Products (sellerId: 4) - 5 products
-  {
-    id: 20,
-    title: "Ninja Coffee Maker Pro",
-    name: "Ninja Coffee Maker Pro",
-    price: 89.99,
-    originalPrice: 120.0,
-    category: "appliances",
-    sellerId: 4,
-    seller: "HomeGoods",
-    image:
-      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop",
-    description: "Automatic coffee brewing machine with multiple brew sizes",
-    rating: 4.5,
-    reviewCount: 234,
-    views: 9800,
-    stock: 30,
-    brand: "Ninja",
-  },
-  {
-    id: 21,
-    title: "KitchenAid Artisan Stand Mixer",
-    name: "KitchenAid Artisan Stand Mixer",
-    price: 349.99,
-    originalPrice: 429.99,
-    category: "appliances",
-    sellerId: 4,
-    seller: "HomeGoods",
-    image:
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
-    description: "Professional 5-quart stand mixer for all your baking needs",
-    rating: 4.9,
-    reviewCount: 189,
-    views: 7200,
-    stock: 15,
-    brand: "KitchenAid",
-  },
-  {
-    id: 22,
-    title: "Dyson V15 Detect Cordless Vacuum",
-    name: "Dyson V15 Detect Cordless Vacuum",
-    price: 549.99,
-    originalPrice: 649.99,
-    category: "cleaning",
-    sellerId: 4,
-    seller: "HomeGoods",
-    image:
-      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-    description: "Cordless stick vacuum with laser dust detection technology",
-    rating: 4.7,
-    reviewCount: 145,
-    views: 6100,
-    stock: 25,
-    brand: "Dyson",
-  },
-  {
-    id: 23,
-    title: "Le Creuset Dutch Oven 5.5qt",
-    name: "Le Creuset Dutch Oven 5.5qt",
-    price: 279.99,
-    originalPrice: 350.0,
-    category: "cookware",
-    sellerId: 4,
-    seller: "HomeGoods",
-    image:
-      "https://images.unsplash.com/photo-1556909114-54c7b7fd8636?w=400&h=300&fit=crop",
-    description: "Enameled cast iron Dutch oven for slow cooking and braising",
-    rating: 4.8,
-    reviewCount: 98,
-    views: 4200,
-    stock: 20,
-    brand: "Le Creuset",
-  },
-  {
-    id: 24,
-    title: "Instant Pot Duo 7-in-1",
-    name: "Instant Pot Duo 7-in-1",
-    price: 99.99,
-    originalPrice: 129.99,
-    category: "appliances",
-    sellerId: 4,
-    seller: "HomeGoods",
-    image:
-      "https://images.unsplash.com/photo-1585515656071-f36df0c11b88?w=400&h=300&fit=crop",
-    description:
-      "Multi-functional electric pressure cooker with 7 appliances in 1",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop",
+    category: "automotive",
+    subcategory: "electronics",
+    brand: "Garmin",
+    seller: "Auto Parts Pro",
     rating: 4.6,
-    reviewCount: 567,
-    views: 12400,
-    stock: 45,
-    brand: "Instant Pot",
-  },
-
-  // PhotoPro Products (sellerId: 5) - 6 products
-  {
-    id: 25,
-    title: "Canon EOS R6 Mark II",
-    name: "Canon EOS R6 Mark II",
-    price: 2499.99,
-    originalPrice: 2699.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop",
-    description: "Professional mirrorless camera with 4K 60p video recording",
-    rating: 4.9,
-    reviewCount: 87,
-    views: 3200,
-    stock: 15,
-    brand: "Canon",
-  },
-  {
-    id: 26,
-    title: "Sony Alpha A7 IV",
-    name: "Sony Alpha A7 IV",
-    price: 2299.99,
-    originalPrice: 2499.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&h=300&fit=crop",
+    reviewCount: 892,
+    inStock: true,
+    stockQuantity: 45,
+    discount: 25,
+    views: 12340,
+    sales: 156,
     description:
-      "Full-frame mirrorless camera with 33MP sensor and real-time tracking",
-    rating: 4.8,
-    reviewCount: 76,
-    views: 2800,
-    stock: 12,
-    brand: "Sony",
-  },
-  {
-    id: 27,
-    title: "Nikon Z9 Professional",
-    name: "Nikon Z9 Professional",
-    price: 4999.99,
-    originalPrice: 5499.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1606983287719-04cb5d22006c?w=400&h=300&fit=crop",
-    description: "Flagship mirrorless camera with 45.7MP sensor and 8K video",
-    rating: 4.7,
-    reviewCount: 54,
-    views: 2100,
-    stock: 8,
-    brand: "Nikon",
-  },
-  {
-    id: 28,
-    title: "Canon RF 70-200mm f/2.8L IS USM",
-    name: "Canon RF 70-200mm f/2.8L IS USM",
-    price: 1899.99,
-    originalPrice: 2099.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1606983340200-7990c7cddc7b?w=400&h=300&fit=crop",
-    description: "Professional telephoto zoom lens with Image Stabilization",
-    rating: 4.9,
-    reviewCount: 43,
-    views: 1800,
-    stock: 6,
-    brand: "Canon",
-  },
-  {
-    id: 29,
-    title: "Manfrotto MT190XPRO4 Tripod",
-    name: "Manfrotto MT190XPRO4 Tripod",
-    price: 399.99,
-    originalPrice: 499.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1606983287851-4c74e2a6dd2b?w=400&h=300&fit=crop",
-    description: "Professional aluminum tripod with 90° column mechanism",
-    rating: 4.6,
-    reviewCount: 67,
-    views: 2400,
-    stock: 18,
-    brand: "Manfrotto",
-  },
-  {
-    id: 30,
-    title: "Godox AD600Pro Studio Flash",
-    name: "Godox AD600Pro Studio Flash",
-    price: 849.99,
-    originalPrice: 999.99,
-    category: "cameras",
-    sellerId: 5,
-    seller: "PhotoPro",
-    image:
-      "https://images.unsplash.com/photo-1551439602-a3cfd7ee0334?w=400&h=300&fit=crop",
-    description: "Professional portable studio flash with TTL and HSS",
-    rating: 4.7,
-    reviewCount: 29,
-    views: 1200,
-    stock: 10,
-    brand: "Godox",
+      "Capture every moment on the road with 4K Ultra HD recording. Features GPS tracking, voice control, and automatic incident detection.",
+    features: [
+      "4K Ultra HD recording",
+      "GPS tracking",
+      "Voice control",
+      "Incident detection",
+      "WiFi connectivity",
+      "Mobile app support",
+    ],
+    specifications: {
+      Resolution: "4K Ultra HD",
+      "Field of View": "180°",
+      Storage: "64GB included",
+      GPS: "Built-in",
+      Connectivity: "WiFi, Bluetooth",
+      Mount: "Suction cup",
+    },
   },
 ];
 
 // Get all products with optional filtering
 router.get("/", async (req, res) => {
   try {
-    let products = [];
+    const { category, search, minPrice, maxPrice, sortBy } = req.query;
+    let filteredProducts = [...products];
 
-    // Try to get products from database first, safely fallback to mock data
-    try {
-      // Check if database models are available
-      if (Listing && Seller && sequelize) {
-        const dbListings = await Listing.findAll({
-          include: [
-            {
-              model: Seller,
-              as: "seller",
-              attributes: ["name"],
-              required: false,
-            },
-          ],
-          where: {
-            availabilityStatus: "available",
-          },
-          limit: 100, // Prevent overwhelming responses
-        });
-
-        if (dbListings && dbListings.length > 0) {
-          console.log(`✅ Loaded ${dbListings.length} products from database`);
-          products = dbListings.map((listing) => ({
-            id: listing.id,
-            title: listing.title,
-            name: listing.title,
-            price: parseFloat(listing.price) || 0,
-            originalPrice:
-              parseFloat(listing.originalPrice) ||
-              parseFloat(listing.price) ||
-              0,
-            category: "uncategorized", // Simplified for now
-            seller: listing.seller?.name || "Unknown Seller",
-            sellerId: listing.sellerId,
-            image: Array.isArray(listing.images) ? listing.images[0] : "",
-            description: listing.description || "",
-            rating: 4.5,
-            reviewCount: 0,
-            views: listing.viewsCount || 0,
-            stock: 10,
-            brand: "",
-          }));
-        } else {
-          throw new Error("No listings found in database");
-        }
-      } else {
-        throw new Error("Database models not available");
-      }
-    } catch (dbError) {
-      console.log(
-        "⚠️ Database query failed, using mock data:",
-        dbError.message
+    // Apply filters
+    if (category && category !== "all") {
+      filteredProducts = filteredProducts.filter(
+        (p) => p.category === category
       );
-      products = [...mockProducts];
     }
 
-    const { category, seller, minPrice, maxPrice, search } = req.query;
-
-    if (category) {
-      products = products.filter((p) => p.category === category);
-    }
-
-    if (seller) {
-      products = products.filter((p) =>
-        p.seller.toLowerCase().includes(seller.toLowerCase())
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredProducts = filteredProducts.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchLower) ||
+          p.brand.toLowerCase().includes(searchLower) ||
+          p.description.toLowerCase().includes(searchLower)
       );
     }
 
     if (minPrice) {
-      products = products.filter((p) => p.price >= parseFloat(minPrice));
+      filteredProducts = filteredProducts.filter(
+        (p) => p.price >= parseFloat(minPrice)
+      );
     }
 
     if (maxPrice) {
-      products = products.filter((p) => p.price <= parseFloat(maxPrice));
+      filteredProducts = filteredProducts.filter(
+        (p) => p.price <= parseFloat(maxPrice)
+      );
     }
 
-    if (search) {
-      products = products.filter(
-        (p) =>
-          p.title.toLowerCase().includes(search.toLowerCase()) ||
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          p.description.toLowerCase().includes(search.toLowerCase())
-      );
+    // Apply sorting
+    if (sortBy) {
+      switch (sortBy) {
+        case "price-low":
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case "price-high":
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case "rating":
+          filteredProducts.sort((a, b) => b.rating - a.rating);
+          break;
+        case "popularity":
+          filteredProducts.sort((a, b) => b.views - a.views);
+          break;
+        default:
+          // Default sorting by relevance (id)
+          break;
+      }
     }
 
     res.json({
       success: true,
-      data: products,
-      total: products.length,
-      message: "Products retrieved successfully",
+      data: filteredProducts,
+      total: filteredProducts.length,
+      filters: { category, search, minPrice, maxPrice, sortBy },
     });
   } catch (error) {
-    console.error("Error in products route:", error);
+    logger.error("Error fetching products:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch products",
-      message: error.message,
+      code: "PRODUCTS_ERROR",
     });
   }
 });
 
 // Get single product by ID
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const productId = parseInt(req.params.id);
-    const product = mockProducts.find((p) => p.id === productId);
+    const product = products.find((p) => p.id === productId);
 
     if (!product) {
       return res.status(404).json({
         success: false,
         error: "Product not found",
-        message: `Product with ID ${productId} does not exist`,
+        code: "PRODUCT_NOT_FOUND",
       });
     }
 
     res.json({
       success: true,
       data: product,
-      message: "Product retrieved successfully",
     });
   } catch (error) {
-    console.error("Error in product by ID route:", error);
+    logger.error("Error fetching product:", error);
     res.status(500).json({
       success: false,
       error: "Failed to fetch product",
-      message: error.message,
+      code: "PRODUCT_ERROR",
     });
   }
 });
 
+// Export the products array for use in other routes
 module.exports = router;
-module.exports.mockProducts = mockProducts;
-// Force deployment Fri Aug 15 07:58:17 PKT 2025
-// Force deployment Fri Aug 15 08:00:51 PKT 2025
+module.exports.products = products;

@@ -156,7 +156,7 @@ export default function Orders() {
                           </p>
                           <p className="text-sm text-gray-500">
                             Placed on{" "}
-                            {new Date(order.date).toLocaleDateString()}
+                            {new Date(order.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                       </div>

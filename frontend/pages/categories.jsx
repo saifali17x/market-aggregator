@@ -46,7 +46,10 @@ export default function CategoriesPage() {
     <Layout>
       <Head>
         <title>Categories - SeezyMart</title>
-        <meta name="description" content="Browse all product categories on SeezyMart" />
+        <meta
+          name="description"
+          content="Browse all product categories on SeezyMart"
+        />
       </Head>
 
       <div className="min-h-screen bg-white py-12">
@@ -57,7 +60,8 @@ export default function CategoriesPage() {
               Product Categories
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover amazing products across all categories, from cutting-edge electronics to timeless fashion pieces
+              Discover amazing products across all categories, from cutting-edge
+              electronics to timeless fashion pieces
             </p>
           </div>
 
@@ -72,29 +76,31 @@ export default function CategoriesPage() {
                 <div className="p-8 relative">
                   {/* Background Pattern */}
                   <div className="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
+
                   {/* Category Icon */}
                   <div className="text-5xl mb-6 relative z-10 group-hover:scale-110 transition-transform duration-300">
                     {category.icon}
                   </div>
-                  
+
                   {/* Category Info */}
                   <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300 relative z-10">
                     {category.name}
                   </h3>
-                  
+
                   {/* Product Count */}
                   <div className="flex items-center text-sm text-gray-600 mb-6 relative z-10">
                     <ShoppingBag className="w-5 h-5 mr-2 text-blue-600" />
-                    <span className="font-medium">{category.count} products available</span>
+                    <span className="font-medium">
+                      {category.count} products available
+                    </span>
                   </div>
-                  
+
                   {/* Hover Effect */}
                   <div className="flex items-center text-blue-600 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 relative z-10">
                     Explore {category.name}
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
-                  
+
                   {/* Decorative Elements */}
                   <div className="absolute top-4 right-4 w-16 h-16 bg-blue-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   <div className="absolute bottom-4 left-4 w-8 h-8 bg-green-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"></div>
@@ -111,7 +117,9 @@ export default function CategoriesPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center group">
                 <div className="text-4xl font-bold text-blue-600 mb-3 group-hover:scale-110 transition-transform duration-300">
-                  {categories.reduce((total, cat) => total + cat.count, 0).toLocaleString()}
+                  {categories
+                    .reduce((total, cat) => total + cat.count, 0)
+                    .toLocaleString()}
                 </div>
                 <div className="text-gray-600 font-medium">Total Products</div>
               </div>

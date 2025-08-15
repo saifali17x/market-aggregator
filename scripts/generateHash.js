@@ -1,4 +1,5 @@
-// generateHash.js
+// scripts/generateHash.js
+// Utility script to generate bcrypt hashes for admin passwords
 const bcrypt = require("bcrypt");
 const readline = require("readline");
 

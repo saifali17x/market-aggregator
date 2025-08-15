@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Search, Filter, X } from "lucide-react";
-import { apiService } from "../services/api";
 
 export default function SearchBar({
   onSearch,
@@ -10,8 +9,6 @@ export default function SearchBar({
 }) {
   const [query, setQuery] = useState(initialValue);
   const [showFiltersPanel, setShowFiltersPanel] = useState(showFilters);
-  const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(false);
   const [filters, setFilters] = useState({
     category: "",
     minPrice: "",
@@ -19,47 +16,6 @@ export default function SearchBar({
     condition: "",
     availability: "",
   });
-
-  // Load categories from backend
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
-    try {
-      setLoadingCategories(true);
-      const response = await apiService.getCategories();
-      if (response.success && response.data) {
-        setCategories(response.data);
-      } else {
-        console.error("Failed to load categories:", response.error);
-        // Fallback to basic categories if API fails
-        setCategories([
-          { id: "electronics", name: "Electronics" },
-          { id: "clothing", name: "Clothing" },
-          { id: "home-garden", name: "Home & Garden" },
-          { id: "sports-outdoors", name: "Sports & Outdoors" },
-          { id: "books-media", name: "Books & Media" },
-          { id: "automotive", name: "Automotive" },
-          { id: "health-beauty", name: "Health & Beauty" },
-        ]);
-      }
-    } catch (err) {
-      console.error("Error loading categories:", err);
-      // Fallback to basic categories if API fails
-      setCategories([
-        { id: "electronics", name: "Electronics" },
-        { id: "clothing", name: "Clothing" },
-        { id: "home-garden", name: "Home & Garden" },
-        { id: "sports-outdoors", name: "Sports & Outdoors" },
-        { id: "books-media", name: "Books & Media" },
-        { id: "automotive", name: "Automotive" },
-        { id: "health-beauty", name: "Health & Beauty" },
-      ]);
-    } finally {
-      setLoadingCategories(false);
-    }
-  };
 
   // Update query when initialValue changes
   useEffect(() => {
@@ -152,15 +108,14 @@ export default function SearchBar({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none"
               >
                 <option value="">All Categories</option>
-                {loadingCategories ? (
-                  <option value="">Loading categories...</option>
-                ) : (
-                  categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))
-                )}
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="home-garden">Home & Garden</option>
+                <option value="sports-outdoors">Sports & Outdoors</option>
+                <option value="books-media">Books & Media</option>
+                <option value="automotive">Automotive</option>
+                <option value="health-beauty">Health & Beauty</option>
+                <option value="toys-games">Toys & Games</option>
               </select>
             </div>
 
